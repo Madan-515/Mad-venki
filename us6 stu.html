@@ -1,0 +1,754 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Interactive Course Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #6c63ff;
+            --secondary: #ff6584;
+            --accent: #36d1dc;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #4caf50;
+            --warning: #ff9800;
+            --info: #2196f3;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            padding: 20px;
+            border-radius: 10px;
+            margin-bottom: 30px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--secondary);
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--secondary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+        }
+
+        .progress-bar {
+            background-color: #e0e0e0;
+            border-radius: 10px;
+            height: 10px;
+            margin: 10px 0;
+            overflow: hidden;
+        }
+
+        .progress {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            height: 100%;
+            width: 65%;
+            border-radius: 10px;
+            transition: width 0.5s ease;
+        }
+
+        .course-container {
+            display: grid;
+            grid-template-columns: 7fr 3fr;
+            gap: 30px;
+        }
+
+        .main-content {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .card {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        h2 {
+            color: var(--primary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        h3 {
+            color: var(--dark);
+            margin: 15px 0 10px;
+        }
+
+        .video-container {
+            background: var(--dark);
+            border-radius: 10px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .video-placeholder {
+            color: white;
+            text-align: center;
+            padding: 20px;
+        }
+
+        .video-placeholder i {
+            font-size: 5rem;
+            margin-bottom: 20px;
+            color: var(--primary);
+        }
+
+        .ask-question-btn {
+            background: linear-gradient(90deg, var(--primary), var(--accent));
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin: 20px 0;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .ask-question-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+        }
+
+        .question-form {
+            background: var(--light);
+            padding: 20px;
+            border-radius: 10px;
+            margin: 20px 0;
+            display: none;
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            resize: vertical;
+            min-height: 100px;
+            margin-bottom: 10px;
+            font-family: inherit;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 600;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: var(--dark);
+        }
+
+        .questions-list {
+            margin-top: 20px;
+        }
+
+        .question {
+            background: white;
+            border-radius: 10px;
+            padding: 15px;
+            margin-bottom: 15px;
+            box-shadow: 0 3px 10px rgba(0, 0, 0, 0.05);
+            border-left: 4px solid var(--primary);
+        }
+
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .question-user {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar-small {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--info);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 0.8rem;
+        }
+
+        .question-actions {
+            display: flex;
+            gap: 15px;
+            color: #777;
+        }
+
+        .question-actions i {
+            cursor: pointer;
+        }
+
+        .answers {
+            margin-top: 15px;
+            padding-left: 20px;
+            border-left: 2px solid #eee;
+        }
+
+        .answer {
+            background: var(--light);
+            padding: 12px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+        }
+
+        .answer-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+            font-size: 0.9rem;
+            color: #555;
+        }
+
+        .upvote {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            color: #777;
+            cursor: pointer;
+        }
+
+        .upvote.active {
+            color: var(--primary);
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 15px;
+            margin: 15px 0;
+        }
+
+        .sort-option {
+            padding: 5px 15px;
+            background: var(--light);
+            border-radius: 20px;
+            cursor: pointer;
+            font-size: 0.9rem;
+        }
+
+        .sort-option.active {
+            background: var(--primary);
+            color: white;
+        }
+
+        .certificate-section {
+            text-align: center;
+            padding: 30px;
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border-radius: 15px;
+            margin-top: 20px;
+            display: none;
+        }
+
+        .certificate-icon {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 15px;
+        }
+
+        .download-btn {
+            background: linear-gradient(90deg, var(--success), #8bc34a);
+            color: white;
+            border: none;
+            padding: 12px 30px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            margin-top: 15px;
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .download-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(76, 175, 80, 0.4);
+        }
+
+        .review-section {
+            margin-top: 30px;
+            display: none;
+        }
+
+        .stars {
+            display: flex;
+            gap: 5px;
+            margin: 15px 0;
+        }
+
+        .star {
+            color: #ddd;
+            font-size: 1.5rem;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+
+        .star.active {
+            color: var(--warning);
+        }
+
+        .ai-chat {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            z-index: 100;
+        }
+
+        .chat-btn {
+            background: linear-gradient(90deg, var(--secondary), #ff8a8a);
+            color: white;
+            width: 60px;
+            height: 60px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(255, 101, 132, 0.4);
+            transition: transform 0.3s ease;
+        }
+
+        .chat-btn:hover {
+            transform: scale(1.1);
+        }
+
+        .chat-window {
+            position: absolute;
+            bottom: 70px;
+            right: 0;
+            width: 350px;
+            height: 450px;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 25px rgba(0, 0, 0, 0.15);
+            display: none;
+            flex-direction: column;
+            overflow: hidden;
+        }
+
+        .chat-header {
+            background: linear-gradient(90deg, var(--secondary), #ff8a8a);
+            color: white;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .chat-messages {
+            flex: 1;
+            padding: 15px;
+            overflow-y: auto;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .message {
+            padding: 10px 15px;
+            border-radius: 18px;
+            max-width: 80%;
+        }
+
+        .message.user {
+            align-self: flex-end;
+            background: var(--primary);
+            color: white;
+            border-bottom-right-radius: 5px;
+        }
+
+        .message.ai {
+            align-self: flex-start;
+            background: #f0f0f0;
+            color: var(--dark);
+            border-bottom-left-radius: 5px;
+        }
+
+        .chat-input {
+            display: flex;
+            padding: 15px;
+            border-top: 1px solid #eee;
+        }
+
+        .chat-input input {
+            flex: 1;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 50px;
+            outline: none;
+        }
+
+        .chat-input button {
+            background: var(--secondary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            margin-left: 10px;
+            cursor: pointer;
+        }
+
+        .course-progress {
+            margin: 20px 0;
+        }
+
+        .progress-text {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 5px;
+        }
+
+        @media (max-width: 768px) {
+            .course-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .chat-window {
+                width: 300px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>Bildung</span>
+            </div>
+            <div class="user-info">
+                <div>Hi, Madan!</div>
+                <div class="user-avatar">MK</div>
+            </div>
+        </header>
+
+        <div class="course-progress">
+            <div class="progress-text">
+                <span>Course Progress</span>
+                <span>65%</span>
+            </div>
+            <div class="progress-bar">
+                <div class="progress"></div>
+            </div>
+        </div>
+
+        <div class="course-container">
+            <div class="main-content">
+                <h2><i class="fas fa-play-circle"></i> Advanced Web Development</h2>
+                
+                <div class="video-container">
+                    <div class="video-placeholder">
+                        <i class="fas fa-play-circle"></i>
+                        <h3>Course Video Player</h3>
+                        <p>Click play to start the lesson</p>
+                    </div>
+                </div>
+
+                <button class="ask-question-btn" id="askQuestionBtn">
+                    <i class="fas fa-question-circle"></i> Ask a Question
+                </button>
+
+                <div class="question-form" id="questionForm">
+                    <h3>Ask Your Question</h3>
+                    <textarea placeholder="Type your question here..."></textarea>
+                    <div class="form-actions">
+                        <button class="btn btn-secondary" id="cancelQuestion">Cancel</button>
+                        <button class="btn btn-primary">Submit Question</button>
+                    </div>
+                </div>
+
+                <div class="qa-section">
+                    <h2><i class="fas fa-comments"></i> Course Q&A</h2>
+                    
+                    <div class="sort-options">
+                        <div class="sort-option active">Most Recent</div>
+                        <div class="sort-option">Most Liked</div>
+                    </div>
+
+                    <div class="questions-list">
+                        <div class="question">
+                            <div class="question-header">
+                                <div class="question-user">
+                                    <div class="user-avatar-small">VK</div>
+                                    <div>Venkat</div>
+                                </div>
+                                <div class="question-actions">
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                            </div>
+                            <p>How do I implement the responsive grid system shown in this lesson?</p>
+                            <div class="answers">
+                                <div class="answer">
+                                    <div class="answer-header">
+                                        <div>Instructor Reply</div>
+                                        <div class="upvote"><i class="fas fa-thumbs-up"></i> 12</div>
+                                    </div>
+                                    <p>You can use CSS Grid or Flexbox. I recommend starting with Flexbox as it's simpler for basic layouts.</p>
+                                </div>
+                                <div class="answer">
+                                    <div class="answer-header">
+                                        <div>Student Reply</div>
+                                        <div class="upvote"><i class="fas fa-thumbs-up"></i> 5</div>
+                                    </div>
+                                    <p>Check out this tutorial, it helped me a lot: https://css-tricks.com/snippets/css/a-guide-to-flexbox/</p>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="question">
+                            <div class="question-header">
+                                <div class="question-user">
+                                    <div class="user-avatar-small">TS</div>
+                                    <div>Ramya</div>
+                                </div>
+                                <div class="question-actions">
+                                    <i class="fas fa-edit"></i>
+                                    <i class="fas fa-trash"></i>
+                                </div>
+                            </div>
+                            <p>Is there a way to optimize images for better performance?</p>
+                            <div class="answers">
+                                <div class="answer">
+                                    <div class="answer-header">
+                                        <div>Instructor Reply</div>
+                                        <div class="upvote"><i class="fas fa-thumbs-up"></i> 8</div>
+                                    </div>
+                                    <p>Yes, you can use tools like ImageOptim or Squoosh to compress images without losing quality.</p>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="review-section" id="reviewSection">
+                    <h2><i class="fas fa-star"></i> Write a Review</h2>
+                    <p>You've completed 65% of the course. Review will be available after 50% completion.</p>
+                    <div class="stars">
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                        <i class="fas fa-star"></i>
+                    </div>
+                    <textarea placeholder="Share your experience with this course..."></textarea>
+                    <button class="btn btn-primary">Submit Review</button>
+                </div>
+
+                <div class="certificate-section" id="certificateSection">
+                    <div class="certificate-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h2>Congratulations!</h2>
+                    <p>You've successfully completed the Advanced Web Development course.</p>
+                    <button class="download-btn">
+                        <i class="fas fa-download"></i> Download Certificate
+                    </button>
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="card">
+                    <h2><i class="fas fa-list-ol"></i> Course Content</h2>
+                    <div class="course-module">
+                        <h3>Module 1: HTML & CSS Fundamentals</h3>
+                        <ul>
+                            <li><i class="fas fa-check-circle" style="color: var(--success);"></i> Introduction to HTML</li>
+                            <li><i class="fas fa-check-circle" style="color: var(--success);"></i> CSS Styling</li>
+                            <li><i class="fas fa-play-circle" style="color: var(--primary);"></i> Responsive Design</li>
+                            <li><i class="fas fa-lock" style="color: #ccc;"></i> CSS Grid & Flexbox</li>
+                        </ul>
+                    </div>
+                    <div class="course-module">
+                        <h3>Module 2: JavaScript Essentials</h3>
+                        <ul>
+                            <li><i class="fas fa-check-circle" style="color: var(--success);"></i> JavaScript Basics</li>
+                            <li><i class="fas fa-play-circle" style="color: var(--primary);"></i> DOM Manipulation</li>
+                            <li><i class="fas fa-lock" style="color: #ccc;"></i> Async JavaScript</li>
+                            <li><i class="fas fa-lock" style="color: #ccc;"></i> Modern JS Features</li>
+                        </ul>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h2><i class="fas fa-trophy"></i> Achievements</h2>
+                    <div class="achievement">
+                        <i class="fas fa-medal" style="color: gold;"></i>
+                        <span>Completed 5 lessons</span>
+                    </div>
+                    <div class="achievement">
+                        <i class="fas fa-medal" style="color: silver;"></i>
+                        <span>Asked first question</span>
+                    </div>
+                    <div class="achievement">
+                        <i class="fas fa-medal" style="color: #cd7f32;"></i>
+                        <span>Active for 7 days</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="ai-chat">
+        
+    </div>
+
+    <script>
+        // Toggle question form
+        document.getElementById('askQuestionBtn').addEventListener('click', function() {
+            document.getElementById('questionForm').style.display = 'block';
+        });
+
+        document.getElementById('cancelQuestion').addEventListener('click', function() {
+            document.getElementById('questionForm').style.display = 'none';
+        });
+
+        // Toggle chat window
+        document.getElementById('chatBtn').addEventListener('click', function() {
+            document.getElementById('chatWindow').style.display = 'flex';
+        });
+
+        document.getElementById('closeChat').addEventListener('click', function() {
+            document.getElementById('chatWindow').style.display = 'none';
+        });
+
+        // Upvote functionality
+        document.querySelectorAll('.upvote').forEach(upvote => {
+            upvote.addEventListener('click', function() {
+                this.classList.toggle('active');
+            });
+        });
+
+        // Sort options
+        document.querySelectorAll('.sort-option').forEach(option => {
+            option.addEventListener('click', function() {
+                document.querySelectorAll('.sort-option').forEach(opt => {
+                    opt.classList.remove('active');
+                });
+                this.classList.add('active');
+            });
+        });
+
+        // Star rating
+        document.querySelectorAll('.star').forEach(star => {
+            star.addEventListener('click', function() {
+                const stars = this.parentElement.querySelectorAll('.star');
+                const index = Array.from(stars).indexOf(this);
+                
+                stars.forEach((s, i) => {
+                    if (i <= index) {
+                        s.classList.add('active');
+                    } else {
+                        s.classList.remove('active');
+                    }
+                });
+            });
+        });
+
+        // Simulate course completion for demo
+        setTimeout(function() {
+            // Show certificate section after 3 seconds (simulating course completion)
+            document.getElementById('certificateSection').style.display = 'block';
+            
+            // Update progress to 100%
+            document.querySelector('.progress').style.width = '100%';
+            document.querySelector('.progress-text span:last-child').textContent = '100%';
+            
+            // Show review section
+            document.getElementById('reviewSection').style.display = 'block';
+        }, 3000);
+    </script>
+</body>
+</html>

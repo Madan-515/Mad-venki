@@ -1,0 +1,918 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>LearnHub - Interactive Course Platform</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --info: #4895ef;
+            --gradient: linear-gradient(135deg, #4361ee, #3a0ca3);
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 0 20px;
+        }
+
+        /* Header Styles */
+        header {
+            background: var(--gradient);
+            color: white;
+            padding: 15px 0;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .logo i {
+            color: var(--accent);
+        }
+
+        nav ul {
+            display: flex;
+            list-style: none;
+            gap: 25px;
+        }
+
+        nav a {
+            color: white;
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            padding: 5px 10px;
+            border-radius: 5px;
+        }
+
+        nav a:hover {
+            background-color: rgba(255, 255, 255, 0.2);
+        }
+
+        .user-actions {
+            display: flex;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 8px 20px;
+            border-radius: 30px;
+            border: none;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background-color: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background-color: #e11570;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background-color: transparent;
+            color: white;
+            border: 2px solid white;
+        }
+
+        .btn-outline:hover {
+            background-color: white;
+            color: var(--primary);
+        }
+
+        /* Main Content */
+        .main-content {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+            margin: 30px 0;
+        }
+
+        /* Course Player Section */
+        .course-player {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            overflow: hidden;
+        }
+
+        .video-container {
+            position: relative;
+            padding-top: 56.25%; /* 16:9 Aspect Ratio */
+            background-color: #000;
+        }
+
+        .video-container video {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+        }
+
+        .video-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 20px;
+            background-color: var(--dark);
+            color: white;
+        }
+
+        .control-left, .control-right {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .control-btn {
+            background: none;
+            border: none;
+            color: white;
+            font-size: 1.2rem;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .control-btn:hover {
+            color: var(--success);
+        }
+
+        .progress-bar {
+            flex-grow: 1;
+            height: 6px;
+            background-color: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin: 0 15px;
+            position: relative;
+            cursor: pointer;
+        }
+
+        .progress {
+            position: absolute;
+            height: 100%;
+            background-color: var(--success);
+            border-radius: 3px;
+            width: 35%;
+        }
+
+        .lesson-info {
+            padding: 20px;
+        }
+
+        .lesson-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: var(--secondary);
+        }
+
+        .lesson-description {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .action-buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .btn-complete {
+            background-color: var(--success);
+            color: white;
+        }
+
+        .btn-complete:hover {
+            background-color: #3ab0d5;
+        }
+
+        .btn-download {
+            background-color: var(--info);
+            color: white;
+        }
+
+        .btn-download:hover {
+            background-color: #3a7bd5;
+        }
+
+        /* Course Progress */
+        .progress-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-bottom: 30px;
+        }
+
+        .progress-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .progress-title {
+            font-size: 1.3rem;
+            color: var(--secondary);
+        }
+
+        .progress-percent {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .progress-bar-container {
+            height: 12px;
+            background-color: #e9ecef;
+            border-radius: 6px;
+            overflow: hidden;
+            margin-bottom: 10px;
+        }
+
+        .progress-fill {
+            height: 100%;
+            background: var(--gradient);
+            width: 65%;
+            border-radius: 6px;
+        }
+
+        .progress-stats {
+            display: flex;
+            justify-content: space-between;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Course Content */
+        .course-content {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+        }
+
+        .content-header {
+            font-size: 1.3rem;
+            color: var(--secondary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .module {
+            margin-bottom: 20px;
+            border: 1px solid #f0f0f0;
+            border-radius: 10px;
+            overflow: hidden;
+        }
+
+        .module-header {
+            background-color: #f8f9fa;
+            padding: 15px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            cursor: pointer;
+        }
+
+        .module-title {
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .module-lessons {
+            display: none;
+            padding: 0;
+        }
+
+        .module.active .module-lessons {
+            display: block;
+        }
+
+        .lesson-item {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            border-bottom: 1px solid #f0f0f0;
+            transition: all 0.3s ease;
+        }
+
+        .lesson-item:hover {
+            background-color: #f8f9fa;
+        }
+
+        .lesson-item.active {
+            background-color: #eef7ff;
+            border-left: 4px solid var(--primary);
+        }
+
+        .lesson-icon {
+            margin-right: 15px;
+            color: var(--primary);
+        }
+
+        .lesson-check {
+            margin-left: auto;
+            color: var(--success);
+        }
+
+        .lesson-duration {
+            margin-left: 15px;
+            color: #666;
+            font-size: 0.9rem;
+        }
+
+        /* Quiz Section */
+        .quiz-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-top: 30px;
+        }
+
+        .quiz-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .quiz-title {
+            font-size: 1.3rem;
+            color: var(--secondary);
+        }
+
+        .quiz-container {
+            background-color: #f8f9fa;
+            padding: 20px;
+            border-radius: 10px;
+        }
+
+        .quiz-question {
+            font-size: 1.1rem;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+
+        .quiz-options {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .quiz-option {
+            display: flex;
+            align-items: center;
+            padding: 12px 15px;
+            background-color: white;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .quiz-option:hover {
+            background-color: #eef7ff;
+        }
+
+        .quiz-option input {
+            margin-right: 10px;
+        }
+
+        .quiz-actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        /* Certificate Section */
+        .certificate-section {
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            padding: 20px;
+            margin-top: 30px;
+            text-align: center;
+            display: none;
+        }
+
+        .certificate-icon {
+            font-size: 4rem;
+            color: var(--warning);
+            margin-bottom: 20px;
+        }
+
+        .certificate-title {
+            font-size: 1.5rem;
+            color: var(--secondary);
+            margin-bottom: 10px;
+        }
+
+        .certificate-description {
+            color: #666;
+            margin-bottom: 25px;
+        }
+
+        /* Footer */
+        footer {
+            background: var(--dark);
+            color: white;
+            padding: 30px 0;
+            margin-top: 50px;
+        }
+
+        .footer-content {
+            display: flex;
+            justify-content: space-between;
+            flex-wrap: wrap;
+            gap: 30px;
+        }
+
+        .footer-section {
+            flex: 1;
+            min-width: 200px;
+        }
+
+        .footer-section h3 {
+            margin-bottom: 20px;
+            color: var(--success);
+        }
+
+        .footer-links {
+            list-style: none;
+        }
+
+        .footer-links li {
+            margin-bottom: 10px;
+        }
+
+        .footer-links a {
+            color: #ddd;
+            text-decoration: none;
+            transition: all 0.3s ease;
+        }
+
+        .footer-links a:hover {
+            color: var(--success);
+        }
+
+        .social-icons {
+            display: flex;
+            gap: 15px;
+            margin-top: 20px;
+        }
+
+        .social-icons a {
+            color: white;
+            font-size: 1.2rem;
+            transition: all 0.3s ease;
+        }
+
+        .social-icons a:hover {
+            color: var(--success);
+        }
+
+        .copyright {
+            text-align: center;
+            margin-top: 30px;
+            padding-top: 20px;
+            border-top: 1px solid #444;
+            color: #aaa;
+        }
+
+        /* Responsive Design */
+        @media (max-width: 992px) {
+            .main-content {
+                grid-template-columns: 1fr;
+            }
+            
+            .sidebar {
+                order: -1;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            nav ul {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            
+            .user-actions {
+                width: 100%;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Header -->
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">
+                    <i class="fas fa-graduation-cap"></i>
+                    <span>LearnHub</span>
+                </div>
+                <nav>
+                    <ul>
+                        <li><a href="#"><i class="fas fa-home"></i> Home</a></li>
+                        <li><a href="#"><i class="fas fa-book"></i> Courses</a></li>
+                        <li><a href="#"><i class="fas fa-chart-bar"></i> Progress</a></li>
+                        <li><a href="#"><i class="fas fa-trophy"></i> Achievements</a></li>
+                    </ul>
+                </nav>
+                <div class="user-actions">
+                    <button class="btn btn-outline"><i class="fas fa-bell"></i></button>
+                    <button class="btn btn-outline"><i class="fas fa-user"></i> Profile</button>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <!-- Main Content -->
+        <div class="main-content">
+            <!-- Left Column -->
+            <div class="left-column">
+                <!-- Course Player -->
+                <div class="course-player">
+                    <div class="video-container">
+                        <video id="lessonVideo" controls>
+                            <source src="#" type="video/mp4">
+                            Your browser does not support the video tag.
+                        </video>
+                    </div>
+                    <div class="video-controls">
+                        <div class="control-left">
+                            <button class="control-btn"><i class="fas fa-play"></i></button>
+                            <button class="control-btn"><i class="fas fa-volume-up"></i></button>
+                        </div>
+                        <div class="progress-bar">
+                            <div class="progress"></div>
+                        </div>
+                        <div class="control-right">
+                            <button class="control-btn"><i class="fas fa-expand"></i></button>
+                        </div>
+                    </div>
+                    <div class="lesson-info">
+                        <h2 class="lesson-title">Introduction to Web Development</h2>
+                        <p class="lesson-description">In this lesson, we'll cover the basics of HTML, CSS, and JavaScript. You'll learn how to structure web pages, style them, and add interactivity.</p>
+                        <div class="action-buttons">
+                            <button class="btn btn-complete" id="markCompleteBtn"><i class="fas fa-check-circle"></i> Mark as Complete</button>
+                            <button class="btn btn-download"><i class="fas fa-download"></i> Download Materials</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Quiz Section -->
+                <div class="quiz-section">
+                    <div class="quiz-header">
+                        <h2 class="quiz-title">Module 1 Quiz</h2>
+                        <span>Score: <strong id="quizScore">0/5</strong></span>
+                    </div>
+                    <div class="quiz-container">
+                        <div class="quiz-question" id="quizQuestion">What does HTML stand for?</div>
+                        <div class="quiz-options" id="quizOptions">
+                            <label class="quiz-option">
+                                <input type="radio" name="quiz" value="A"> Hyper Text Markup Language
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="quiz" value="B"> High Tech Modern Language
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="quiz" value="C"> Hyper Transfer Markup Language
+                            </label>
+                            <label class="quiz-option">
+                                <input type="radio" name="quiz" value="D"> Home Tool Markup Language
+                            </label>
+                        </div>
+                        <div class="quiz-actions">
+                            <button class="btn btn-outline" id="prevQuestionBtn" disabled><i class="fas fa-arrow-left"></i> Previous</button>
+                            <button class="btn btn-primary" id="nextQuestionBtn">Next <i class="fas fa-arrow-right"></i></button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Certificate Section (Initially Hidden) -->
+                <div class="certificate-section" id="certificateSection">
+                    <div class="certificate-icon">
+                        <i class="fas fa-award"></i>
+                    </div>
+                    <h2 class="certificate-title">Congratulations!</h2>
+                    <p class="certificate-description">You've successfully completed the Web Development Fundamentals course. Download your certificate to showcase your achievement.</p>
+                    <button class="btn btn-primary" id="getCertificateBtn"><i class="fas fa-download"></i> Get Certificate</button>
+                </div>
+            </div>
+
+            <!-- Right Column -->
+            <div class="sidebar">
+                <!-- Course Progress -->
+                <div class="progress-section">
+                    <div class="progress-header">
+                        <h2 class="progress-title">Course Progress</h2>
+                        <span class="progress-percent">65%</span>
+                    </div>
+                    <div class="progress-bar-container">
+                        <div class="progress-fill"></div>
+                    </div>
+                    <div class="progress-stats">
+                        <span>12/18 Lessons</span>
+                        <span>3/5 Quizzes</span>
+                    </div>
+                </div>
+
+                <!-- Course Content -->
+                <div class="course-content">
+                    <h2 class="content-header">Course Content</h2>
+                    
+                    <div class="module active">
+                        <div class="module-header">
+                            <h3 class="module-title">Module 1: HTML Fundamentals</h3>
+                            <span><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="module-lessons">
+                            <div class="lesson-item active">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>Introduction to HTML</span>
+                                <i class="fas fa-check-circle lesson-check"></i>
+                                <span class="lesson-duration">10:25</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>HTML Tags and Elements</span>
+                                <i class="fas fa-check-circle lesson-check"></i>
+                                <span class="lesson-duration">15:40</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>Creating Your First Web Page</span>
+                                <span class="lesson-duration">12:15</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-question-circle lesson-icon"></i>
+                                <span>Module 1 Quiz</span>
+                                <i class="fas fa-check-circle lesson-check"></i>
+                                <span class="lesson-duration">5 questions</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="module">
+                        <div class="module-header">
+                            <h3 class="module-title">Module 2: CSS Styling</h3>
+                            <span><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="module-lessons">
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>Introduction to CSS</span>
+                                <i class="fas fa-check-circle lesson-check"></i>
+                                <span class="lesson-duration">14:20</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>CSS Selectors and Properties</span>
+                                <i class="fas fa-check-circle lesson-check"></i>
+                                <span class="lesson-duration">18:35</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>Layout with Flexbox and Grid</span>
+                                <span class="lesson-duration">22:10</span>
+                            </div>
+                        </div>
+                    </div>
+                    
+                    <div class="module">
+                        <div class="module-header">
+                            <h3 class="module-title">Module 3: JavaScript Basics</h3>
+                            <span><i class="fas fa-chevron-down"></i></span>
+                        </div>
+                        <div class="module-lessons">
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>JavaScript Introduction</span>
+                                <span class="lesson-duration">16:45</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>Variables and Data Types</span>
+                                <span class="lesson-duration">19:30</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-play-circle lesson-icon"></i>
+                                <span>Functions and Events</span>
+                                <span class="lesson-duration">21:15</span>
+                            </div>
+                            <div class="lesson-item">
+                                <i class="fas fa-question-circle lesson-icon"></i>
+                                <span>Module 3 Quiz</span>
+                                <span class="lesson-duration">5 questions</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+   
+
+    <script>
+        // Toggle module content
+        document.querySelectorAll('.module-header').forEach(header => {
+            header.addEventListener('click', () => {
+                const module = header.parentElement;
+                module.classList.toggle('active');
+            });
+        });
+
+        // Mark as complete functionality
+        document.getElementById('markCompleteBtn').addEventListener('click', function() {
+            this.innerHTML = '<i class="fas fa-check-circle"></i> Completed!';
+            this.style.backgroundColor = '#28a745';
+            this.disabled = true;
+            
+            // Update progress
+            updateProgress();
+        });
+
+        // Quiz functionality
+        let currentQuestion = 1;
+        const totalQuestions = 5;
+        const quizQuestions = [
+            {
+                question: "What does HTML stand for?",
+                options: [
+                    "Hyper Text Markup Language",
+                    "High Tech Modern Language",
+                    "Hyper Transfer Markup Language",
+                    "Home Tool Markup Language"
+                ],
+                correct: "A"
+            },
+            {
+                question: "Which CSS property is used to change the text color?",
+                options: [
+                    "text-color",
+                    "font-color",
+                    "color",
+                    "text-style"
+                ],
+                correct: "C"
+            },
+            {
+                question: "Which tag is used to create a hyperlink in HTML?",
+                options: [
+                    "<link>",
+                    "<a>",
+                    "<href>",
+                    "<hyperlink>"
+                ],
+                correct: "B"
+            },
+            {
+                question: "How do you write 'Hello World' in an alert box?",
+                options: [
+                    "alert('Hello World');",
+                    "msg('Hello World');",
+                    "alertBox('Hello World');",
+                    "msgBox('Hello World');"
+                ],
+                correct: "A"
+            },
+            {
+                question: "Which property is used to change the background color?",
+                options: [
+                    "bgcolor",
+                    "color",
+                    "background-color",
+                    "bg-color"
+                ],
+                correct: "C"
+            }
+        ];
+
+        function loadQuestion(questionIndex) {
+            const question = quizQuestions[questionIndex];
+            document.getElementById('quizQuestion').textContent = question.question;
+            
+            const optionsContainer = document.getElementById('quizOptions');
+            optionsContainer.innerHTML = '';
+            
+            question.options.forEach((option, index) => {
+                const optionElement = document.createElement('label');
+                optionElement.className = 'quiz-option';
+                optionElement.innerHTML = `
+                    <input type="radio" name="quiz" value="${String.fromCharCode(65 + index)}">
+                    ${option}
+                `;
+                optionsContainer.appendChild(optionElement);
+            });
+            
+            document.getElementById('prevQuestionBtn').disabled = questionIndex === 0;
+            document.getElementById('nextQuestionBtn').textContent = questionIndex === totalQuestions - 1 ? 'Submit' : 'Next <i class="fas fa-arrow-right"></i>';
+        }
+
+        document.getElementById('nextQuestionBtn').addEventListener('click', function() {
+            if (currentQuestion < totalQuestions) {
+                currentQuestion++;
+                loadQuestion(currentQuestion - 1);
+            } else {
+                // Quiz completed
+                document.querySelector('.quiz-section').style.display = 'none';
+                document.getElementById('certificateSection').style.display = 'block';
+            }
+        });
+
+        document.getElementById('prevQuestionBtn').addEventListener('click', function() {
+            if (currentQuestion > 1) {
+                currentQuestion--;
+                loadQuestion(currentQuestion - 1);
+            }
+        });
+
+        // Initialize first question
+        loadQuestion(0);
+
+        // Update progress function
+        function updateProgress() {
+            const progressFill = document.querySelector('.progress-fill');
+            const progressPercent = document.querySelector('.progress-percent');
+            const progressStats = document.querySelector('.progress-stats span');
+            
+            // Simulate progress increase
+            let currentProgress = 65;
+            if (currentProgress < 100) {
+                currentProgress += 5;
+                progressFill.style.width = `${currentProgress}%`;
+                progressPercent.textContent = `${currentProgress}%`;
+                
+                // Update lesson count
+                const stats = progressStats.textContent.split('/');
+                const completed = parseInt(stats[0]) + 1;
+                const total = parseInt(stats[1]);
+                progressStats.textContent = `${completed}/${total} Lessons`;
+                
+                // Show certificate when progress reaches 100%
+                if (currentProgress >= 100) {
+                    setTimeout(() => {
+                        document.getElementById('certificateSection').style.display = 'block';
+                    }, 1000);
+                }
+            }
+        }
+
+        // Get Certificate button
+        document.getElementById('getCertificateBtn').addEventListener('click', function() {
+            alert('Certificate downloaded successfully!');
+        });
+    </script>
+</body>
+</html>

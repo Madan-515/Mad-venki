@@ -1,0 +1,519 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Live Class Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #6c63ff;
+            --secondary: #ff6584;
+            --accent: #36d1dc;
+            --light: #f8f9fa;
+            --dark: #343a40;
+            --success: #28a745;
+            --warning: #ffc107;
+            --info: #17a2b8;
+            --gradient: linear-gradient(135deg, var(--primary), var(--accent));
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+        
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+        
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+        
+        .logo h1 {
+            font-size: 2rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            font-weight: 700;
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            background: white;
+            padding: 10px 20px;
+            border-radius: 50px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.1);
+        }
+        
+        .user-info img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+        
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .card {
+            background: white;
+            border-radius: 20px;
+            padding: 25px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: transform 0.3s, box-shadow 0.3s;
+        }
+        
+        .card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 35px rgba(0,0,0,0.15);
+        }
+        
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+        
+        .card-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary);
+        }
+        
+        .card-icon {
+            width: 50px;
+            height: 50px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: white;
+        }
+        
+        .schedule-icon {
+            background: var(--gradient);
+        }
+        
+        .reminder-icon {
+            background: var(--secondary);
+        }
+        
+        .recordings-icon {
+            background: var(--accent);
+        }
+        
+        .attendance-icon {
+            background: var(--success);
+        }
+        
+        .class-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            background: var(--light);
+            transition: all 0.3s;
+        }
+        
+        .class-item:hover {
+            background: #e9ecef;
+        }
+        
+        .class-info h3 {
+            font-size: 1.1rem;
+            margin-bottom: 5px;
+        }
+        
+        .class-info p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .join-btn {
+            background: var(--gradient);
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 50px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .join-btn:hover {
+            transform: scale(1.05);
+            box-shadow: 0 5px 15px rgba(108, 99, 255, 0.4);
+        }
+        
+        .join-btn:disabled {
+            background: #adb5bd;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+        
+        .notification-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            background: var(--light);
+        }
+        
+        .notification-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--info);
+            color: white;
+        }
+        
+        .recording-item {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 12px;
+            background: var(--light);
+        }
+        
+        .play-btn {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: var(--primary);
+            color: white;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .play-btn:hover {
+            transform: scale(1.1);
+        }
+        
+        .attendance-stats {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            margin: 20px 0;
+        }
+        
+        .attendance-circle {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: conic-gradient(var(--success) 75%, #e9ecef 0%);
+            margin-bottom: 20px;
+            position: relative;
+        }
+        
+        .attendance-circle::before {
+            content: '';
+            position: absolute;
+            width: 120px;
+            height: 120px;
+            border-radius: 50%;
+            background: white;
+        }
+        
+        .attendance-percent {
+            position: relative;
+            font-size: 2rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+        
+        .attendance-details {
+            display: flex;
+            justify-content: space-around;
+            width: 100%;
+            margin-top: 20px;
+        }
+        
+        .detail-item {
+            text-align: center;
+        }
+        
+        .detail-value {
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+        
+        .detail-label {
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .full-width {
+            grid-column: 1 / -1;
+        }
+        
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <h1>Bildung</h1>
+            </div>
+            <div class="user-info">
+                <img src="https://i.pravatar.cc/150?img=12" alt="Student">
+                <div>
+                    <h3>Madan</h3>
+                    <p>Computer Science</p>
+                </div>
+            </div>
+        </header>
+        
+        <div class="dashboard">
+            <!-- Upcoming Classes -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Upcoming Classes</h2>
+                    <div class="card-icon schedule-icon">
+                        <i class="fas fa-calendar-alt"></i>
+                    </div>
+                </div>
+                
+                <div class="class-item">
+                    <div class="class-info">
+                        <h3>Advanced Algorithms</h3>
+                        <p><i class="far fa-clock"></i> Today, 10:00 AM - 11:30 AM</p>
+                    </div>
+                    <button class="join-btn" id="joinClass1">Join Now</button>
+                </div>
+                
+                <div class="class-item">
+                    <div class="class-info">
+                        <h3>Data Structures</h3>
+                        <p><i class="far fa-clock"></i> Tomorrow, 2:00 PM - 3:30 PM</p>
+                    </div>
+                    <button class="join-btn" disabled>Join Now</button>
+                </div>
+                
+                <div class="class-item">
+                    <div class="class-info">
+                        <h3>Web Development</h3>
+                        <p><i class="far fa-clock"></i> Friday, 9:00 AM - 10:30 AM</p>
+                    </div>
+                    <button class="join-btn" disabled>Join Now</button>
+                </div>
+            </div>
+            
+            <!-- Reminders -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Reminders</h2>
+                    <div class="card-icon reminder-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h3>Advanced Algorithms</h3>
+                        <p>Reminder sent 30 minutes before class</p>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-bell"></i>
+                    </div>
+                    <div>
+                        <h3>Data Structures</h3>
+                        <p>In-app notification 15 minutes before class</p>
+                    </div>
+                </div>
+                
+                <div class="notification-item">
+                    <div class="notification-icon">
+                        <i class="fas fa-envelope"></i>
+                    </div>
+                    <div>
+                        <h3>Web Development</h3>
+                        <p>Email reminder 30 minutes before class</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Class Recordings -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Class Recordings</h2>
+                    <div class="card-icon recordings-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                
+                <div class="recording-item">
+                    <div class="play-btn">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div>
+                        <h3>Database Management</h3>
+                        <p>Recorded on: May 15, 2023 | Duration: 1:25:30</p>
+                    </div>
+                </div>
+                
+                <div class="recording-item">
+                    <div class="play-btn">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div>
+                        <h3>Software Engineering</h3>
+                        <p>Recorded on: May 10, 2023 | Duration: 1:40:15</p>
+                    </div>
+                </div>
+                
+                <div class="recording-item">
+                    <div class="play-btn">
+                        <i class="fas fa-play"></i>
+                    </div>
+                    <div>
+                        <h3>Machine Learning</h3>
+                        <p>Recorded on: May 5, 2023 | Duration: 1:35:45</p>
+                    </div>
+                </div>
+            </div>
+            
+            <!-- Attendance -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Attendance</h2>
+                    <div class="card-icon attendance-icon">
+                        <i class="fas fa-chart-pie"></i>
+                    </div>
+                </div>
+                
+                <div class="attendance-stats">
+                    <div class="attendance-circle">
+                        <div class="attendance-percent">75%</div>
+                    </div>
+                    
+                    <div class="attendance-details">
+                        <div class="detail-item">
+                            <div class="detail-value">12</div>
+                            <div class="detail-label">Attended</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">4</div>
+                            <div class="detail-label">Missed</div>
+                        </div>
+                        <div class="detail-item">
+                            <div class="detail-value">16</div>
+                            <div class="detail-label">Total</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Join Class Button Functionality
+        document.getElementById('joinClass1').addEventListener('click', function() {
+            // Show loading state
+            this.innerHTML = '<i class="fas fa-spinner fa-spin"></i> Joining...';
+            this.disabled = true;
+            
+            // Simulate API call to join class
+            setTimeout(function() {
+                // Redirect to the class page
+                window.location.href = "class-session.html";
+            }, 1500);
+        });
+        
+        // Play Recording Button Functionality
+        const playButtons = document.querySelectorAll('.play-btn');
+        playButtons.forEach(button => {
+            button.addEventListener('click', function() {
+                // Show loading state
+                const icon = this.querySelector('i');
+                icon.className = 'fas fa-spinner fa-spin';
+                
+                // Simulate loading the recording
+                setTimeout(function() {
+                    // Redirect to recording page
+                    window.location.href = "recording-player.html";
+                }, 1000);
+            });
+        });
+        
+        // Simulate real-time updates
+        function updateJoinButtons() {
+            const now = new Date();
+            const currentTime = now.getHours() * 60 + now.getMinutes();
+            
+            // For demo purposes, let's assume the first class is always active
+            // In a real app, you would check against actual class times
+            document.getElementById('joinClass1').disabled = false;
+        }
+        
+        // Update buttons on page load
+        updateJoinButtons();
+        
+        // Update buttons every minute
+        setInterval(updateJoinButtons, 60000);
+    </script>
+</body>
+</html>
