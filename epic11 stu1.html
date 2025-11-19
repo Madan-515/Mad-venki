@@ -1,0 +1,508 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Dashboard - Manage Your Time</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+            --info: #7209b7;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: linear-gradient(90deg, var(--primary), var(--secondary));
+            color: white;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .course-card {
+            background: white;
+            border-radius: 15px;
+            overflow: hidden;
+            box-shadow: 0 6px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+        }
+
+        .course-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 12px 20px rgba(0, 0, 0, 0.15);
+        }
+
+        .course-header {
+            padding: 20px;
+            color: white;
+            position: relative;
+        }
+
+        .course-title {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .course-instructor {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .course-progress {
+            height: 6px;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 3px;
+            margin-top: 15px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            border-radius: 3px;
+            transition: width 0.5s ease;
+        }
+
+        .course-content {
+            padding: 20px;
+        }
+
+        .course-detail {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eee;
+        }
+
+        .detail-label {
+            font-weight: 600;
+            color: #555;
+        }
+
+        .detail-value {
+            font-weight: 500;
+        }
+
+        .deadlines {
+            margin-top: 20px;
+        }
+
+        .deadline-title {
+            font-weight: 600;
+            margin-bottom: 10px;
+            color: var(--dark);
+            display: flex;
+            align-items: center;
+        }
+
+        .deadline-title i {
+            margin-right: 8px;
+            color: var(--accent);
+        }
+
+        .deadline-item {
+            display: flex;
+            justify-content: space-between;
+            padding: 8px 0;
+            border-bottom: 1px dashed #eee;
+        }
+
+        .deadline-name {
+            flex: 1;
+        }
+
+        .deadline-date {
+            font-weight: 500;
+        }
+
+        .urgent {
+            color: var(--danger);
+            font-weight: 600;
+        }
+
+        .soon {
+            color: var(--warning);
+        }
+
+        .normal {
+            color: var(--success);
+        }
+
+        .course-actions {
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            background: #f8f9fa;
+            border-top: 1px solid #eee;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .filter-container {
+            display: flex;
+            justify-content: center;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .filter-btn {
+            padding: 8px 20px;
+            background: white;
+            border: 1px solid #ddd;
+            border-radius: 25px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            font-weight: 500;
+        }
+
+        .filter-btn.active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px;
+            grid-column: 1 / -1;
+        }
+
+        .empty-state img {
+            max-width: 200px;
+            margin-bottom: 20px;
+            opacity: 0.7;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            h1 {
+                font-size: 2rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            
+            <p class="subtitle">Track your course duration and deadlines to manage your time effectively</p>
+        </header>
+
+        <div class="filter-container">
+            <button class="filter-btn active" data-filter="all">All Courses</button>
+            <button class="filter-btn" data-filter="active">Active</button>
+            <button class="filter-btn" data-filter="upcoming">Upcoming</button>
+            <button class="filter-btn" data-filter="completed">Completed</button>
+        </div>
+
+        <div class="dashboard" id="courseDashboard">
+            <!-- Course cards will be generated by JavaScript -->
+        </div>
+    </div>
+
+    <script>
+        // Sample course data
+        const courses = [
+            {
+                id: 1,
+                title: "Web Development Fundamentals",
+                instructor: "Dr. Sai teja",
+                startDate: "2023-09-15",
+                endDate: "2023-12-15",
+                hours: 120,
+                pace: "10 hours/week",
+                progress: 65,
+                color: "#4361ee",
+                status: "active",
+                deadlines: [
+                    { name: "HTML/CSS Project", date: "2023-10-20", urgency: "normal" },
+                    { name: "JavaScript Quiz", date: "2023-10-25", urgency: "soon" },
+                    { name: "Final Project", date: "2023-12-10", urgency: "normal" }
+                ]
+            },
+            {
+                id: 2,
+                title: "Data Science with Python",
+                instructor: "Prof. sagarika",
+                startDate: "2023-10-01",
+                endDate: "2024-02-01",
+                hours: 180,
+                pace: "12 hours/week",
+                progress: 30,
+                color: "#3a0ca3",
+                status: "active",
+                deadlines: [
+                    { name: "Pandas Assignment", date: "2023-10-28", urgency: "urgent" },
+                    { name: "Data Visualization", date: "2023-11-15", urgency: "soon" },
+                    { name: "Machine Learning Project", date: "2024-01-20", urgency: "normal" }
+                ]
+            },
+            {
+                id: 3,
+                title: "Digital Marketing Strategy",
+                instructor: "Sindhura",
+                startDate: "2023-11-01",
+                endDate: "2024-01-15",
+                hours: 90,
+                pace: "8 hours/week",
+                progress: 0,
+                color: "#f72585",
+                status: "upcoming",
+                deadlines: [
+                    { name: "Market Analysis", date: "2023-11-20", urgency: "normal" },
+                    { name: "SEO Strategy", date: "2023-12-10", urgency: "normal" },
+                    { name: "Campaign Proposal", date: "2024-01-05", urgency: "normal" }
+                ]
+            },
+            {
+                id: 4,
+                title: "Mobile App Development",
+                instructor: "Dr. Sai",
+                startDate: "2023-07-10",
+                endDate: "2023-10-10",
+                hours: 150,
+                pace: "12 hours/week",
+                progress: 100,
+                color: "#4cc9f0",
+                status: "completed",
+                deadlines: [
+                    { name: "UI Design", date: "2023-08-15", urgency: "normal" },
+                    { name: "API Integration", date: "2023-09-10", urgency: "normal" },
+                    { name: "Final App Submission", date: "2023-10-05", urgency: "normal" }
+                ]
+            },
+            {
+                id: 5,
+                title: "UX/UI Design Principles",
+                instructor: "Mady",
+                startDate: "2023-09-01",
+                endDate: "2023-11-30",
+                hours: 100,
+                pace: "8 hours/week",
+                progress: 75,
+                color: "#7209b7",
+                status: "active",
+                deadlines: [
+                    { name: "User Research", date: "2023-10-15", urgency: "normal" },
+                    { name: "Wireframes", date: "2023-10-22", urgency: "urgent" },
+                    { name: "Prototype", date: "2023-11-20", urgency: "soon" }
+                ]
+            },
+            {
+                id: 6,
+                title: "Business Analytics",
+                instructor: "Robert Kim",
+                startDate: "2023-12-01",
+                endDate: "2024-03-15",
+                hours: 140,
+                pace: "10 hours/week",
+                progress: 0,
+                color: "#f8961e",
+                status: "upcoming",
+                deadlines: [
+                    { name: "Data Collection", date: "2023-12-20", urgency: "normal" },
+                    { name: "Statistical Analysis", date: "2024-01-25", urgency: "normal" },
+                    { name: "Final Report", date: "2024-03-05", urgency: "normal" }
+                ]
+            }
+        ];
+
+        // Format date to readable string
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'short', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+
+        // Calculate days until deadline
+        function daysUntilDeadline(dateString) {
+            const today = new Date();
+            const deadline = new Date(dateString);
+            const diffTime = deadline - today;
+            const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+            return diffDays;
+        }
+
+        // Determine urgency class based on days until deadline
+        function getUrgencyClass(dateString) {
+            const days = daysUntilDeadline(dateString);
+            if (days < 3) return "urgent";
+            if (days < 7) return "soon";
+            return "normal";
+        }
+
+        // Generate course cards
+        function generateCourseCards(filter = "all") {
+            const dashboard = document.getElementById('courseDashboard');
+            dashboard.innerHTML = '';
+
+            const filteredCourses = filter === "all" 
+                ? courses 
+                : courses.filter(course => course.status === filter);
+
+            if (filteredCourses.length === 0) {
+                dashboard.innerHTML = `
+                    <div class="empty-state">
+                        <img src="data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAyNCAyNCIgZmlsbD0ibm9uZSIgc3Ryb2tlPSIjNzM3MzczIiBzdHJva2Utd2lkdGg9IjIiIHN0cm9rZS1saW5lY2FwPSJyb3VuZCIgc3Ryb2tlLWxpbmVqb2luPSJyb3VuZCI+PHJlY3Qgd2lkdGg9IjE4IiBoZWlnaHQ9IjE4IiB4PSIzIiB5PSIzIiByeD0iMiIgcnk9IjIiPjwvcmVjdD48Y2lyY2xlIGN4PSI5IiBjeT0iOSIgcj0iMSI+PC9jaXJjbGU+PHBhdGggZD0iTTIxIDE1YTMgMyAwIDAgMS0zIDNINmEzIDMgMCAwIDEtMy0zIj48L3BhdGg+PC9zdmc+" alt="No courses">
+                        <h2>No courses found</h2>
+                        <p>Try selecting a different filter or check back later for new courses.</p>
+                    </div>
+                `;
+                return;
+            }
+
+            filteredCourses.forEach(course => {
+                const card = document.createElement('div');
+                card.className = 'course-card';
+                card.dataset.status = course.status;
+
+                // Calculate progress percentage
+                const progressPercentage = course.progress;
+
+                // Generate deadlines HTML
+                let deadlinesHTML = '';
+                course.deadlines.forEach(deadline => {
+                    const urgencyClass = getUrgencyClass(deadline.date);
+                    deadlinesHTML += `
+                        <div class="deadline-item">
+                            <span class="deadline-name">${deadline.name}</span>
+                            <span class="deadline-date ${urgencyClass}">${formatDate(deadline.date)}</span>
+                        </div>
+                    `;
+                });
+
+                card.innerHTML = `
+                    <div class="course-header" style="background: ${course.color}">
+                        <h3 class="course-title">${course.title}</h3>
+                        <p class="course-instructor">${course.instructor}</p>
+                        <div class="course-progress">
+                            <div class="progress-bar" style="width: ${progressPercentage}%; background: rgba(255,255,255,0.8);"></div>
+                        </div>
+                    </div>
+                    <div class="course-content">
+                        <div class="course-detail">
+                            <span class="detail-label">Duration:</span>
+                            <span class="detail-value">${formatDate(course.startDate)} - ${formatDate(course.endDate)}</span>
+                        </div>
+                        <div class="course-detail">
+                            <span class="detail-label">Total Hours:</span>
+                            <span class="detail-value">${course.hours} hours</span>
+                        </div>
+                        <div class="course-detail">
+                            <span class="detail-label">Expected Pace:</span>
+                            <span class="detail-value">${course.pace}</span>
+                        </div>
+                        <div class="course-detail">
+                            <span class="detail-label">Progress:</span>
+                            <span class="detail-value">${progressPercentage}%</span>
+                        </div>
+                        <div class="deadlines">
+                            <div class="deadline-title">
+                                <i>📅</i> Upcoming Deadlines
+                            </div>
+                            ${deadlinesHTML}
+                        </div>
+                    </div>
+                    <div class="course-actions">
+                        <button class="btn btn-outline">View Details</button>
+                        <button class="btn btn-primary">Go to Course</button>
+                    </div>
+                `;
+
+                dashboard.appendChild(card);
+            });
+        }
+
+        // Initialize the dashboard
+        document.addEventListener('DOMContentLoaded', function() {
+            generateCourseCards();
+
+            // Add event listeners to filter buttons
+            const filterButtons = document.querySelectorAll('.filter-btn');
+            filterButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    // Remove active class from all buttons
+                    filterButtons.forEach(btn => btn.classList.remove('active'));
+                    
+                    // Add active class to clicked button
+                    this.classList.add('active');
+                    
+                    // Filter courses
+                    const filter = this.dataset.filter;
+                    generateCourseCards(filter);
+                });
+            });
+        });
+    </script>
+</body>
+</html>

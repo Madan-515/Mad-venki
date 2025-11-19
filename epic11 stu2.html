@@ -1,0 +1,787 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Calendar - Live Classes & Schedules</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --danger: #e63946;
+            --info: #7209b7;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: var(--dark);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .logo i {
+            font-size: 2.5rem;
+            color: var(--primary);
+        }
+
+        .logo h1 {
+            font-size: 1.8rem;
+            color: var(--secondary);
+        }
+
+        .user-profile {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: white;
+            padding: 8px 15px;
+            border-radius: 50px;
+            box-shadow: var(--shadow);
+        }
+
+        .user-profile img {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            object-fit: cover;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 300px;
+            gap: 30px;
+        }
+
+        .calendar-container {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 25px;
+            overflow: hidden;
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+        }
+
+        .calendar-header h2 {
+            color: var(--secondary);
+            font-size: 1.5rem;
+        }
+
+        .calendar-nav {
+            display: flex;
+            gap: 10px;
+        }
+
+        .calendar-nav button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .calendar-nav button:hover {
+            background: var(--secondary);
+        }
+
+        .calendar {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        .calendar th {
+            background: var(--primary);
+            color: white;
+            padding: 15px 0;
+            text-align: center;
+        }
+
+        .calendar td {
+            height: 100px;
+            width: 14.28%;
+            padding: 10px;
+            vertical-align: top;
+            border: 1px solid #e0e0e0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .calendar td:hover {
+            background: #f0f5ff;
+        }
+
+        .calendar td.today {
+            background: #e3f2fd;
+            border: 2px solid var(--primary);
+        }
+
+        .calendar-date {
+            font-weight: bold;
+            margin-bottom: 5px;
+            display: block;
+        }
+
+        .event {
+            font-size: 0.75rem;
+            padding: 3px 6px;
+            border-radius: 4px;
+            margin-bottom: 3px;
+            color: white;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .event.live-class {
+            background: var(--accent);
+        }
+
+        .event.quiz {
+            background: var(--warning);
+        }
+
+        .event.deadline {
+            background: var(--danger);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            padding: 20px;
+        }
+
+        .card h3 {
+            color: var(--secondary);
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .card h3 i {
+            color: var(--primary);
+        }
+
+        .upcoming-events {
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .event-item:last-child {
+            border-bottom: none;
+        }
+
+        .event-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .event-icon.live {
+            background: var(--accent);
+        }
+
+        .event-icon.quiz {
+            background: var(--warning);
+        }
+
+        .event-icon.deadline {
+            background: var(--danger);
+        }
+
+        .event-details h4 {
+            font-size: 0.9rem;
+            margin-bottom: 3px;
+        }
+
+        .event-details p {
+            font-size: 0.8rem;
+            color: #666;
+        }
+
+        .notification-settings {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .setting-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .toggle {
+            position: relative;
+            display: inline-block;
+            width: 50px;
+            height: 24px;
+        }
+
+        .toggle input {
+            opacity: 0;
+            width: 0;
+            height: 0;
+        }
+
+        .slider {
+            position: absolute;
+            cursor: pointer;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background-color: #ccc;
+            transition: .4s;
+            border-radius: 24px;
+        }
+
+        .slider:before {
+            position: absolute;
+            content: "";
+            height: 16px;
+            width: 16px;
+            left: 4px;
+            bottom: 4px;
+            background-color: white;
+            transition: .4s;
+            border-radius: 50%;
+        }
+
+        input:checked + .slider {
+            background-color: var(--primary);
+        }
+
+        input:checked + .slider:before {
+            transform: translateX(26px);
+        }
+
+        .stats {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 10px;
+            color: white;
+        }
+
+        .stat-item.live {
+            background: var(--accent);
+        }
+
+        .stat-item.quiz {
+            background: var(--warning);
+        }
+
+        .stat-item.deadline {
+            background: var(--danger);
+        }
+
+        .stat-item.completed {
+            background: var(--success);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: bold;
+            margin: 5px 0;
+        }
+
+        .stat-label {
+            font-size: 0.8rem;
+        }
+
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .modal-content {
+            background: white;
+            border-radius: var(--border-radius);
+            width: 90%;
+            max-width: 500px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-header h2 {
+            color: var(--secondary);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #666;
+        }
+
+        .event-form {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .form-group label {
+            font-weight: 500;
+            color: #555;
+        }
+
+        .form-group input, .form-group select {
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 6px;
+        }
+
+        .form-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-secondary {
+            background: #e0e0e0;
+            color: #333;
+        }
+
+        .btn-secondary:hover {
+            background: #d0d0d0;
+        }
+
+        @media (max-width: 900px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+            
+            .calendar td {
+                height: 80px;
+            }
+        }
+
+        @media (max-width: 600px) {
+            .calendar td {
+                height: 60px;
+                font-size: 0.8rem;
+            }
+            
+            .event {
+                font-size: 0.65rem;
+            }
+            
+            .stats {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-calendar-alt"></i>
+                <h1>Student Calendar</h1>
+            </div>
+            <div class="user-profile">
+                <img src="https://i.pravatar.cc/150?img=12" alt="Student Profile">
+                <span>Madan</span>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <div class="calendar-container">
+                <div class="calendar-header">
+                    <h2>October 2023</h2>
+                    <div class="calendar-nav">
+                        <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                        <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                </div>
+                <table class="calendar">
+                    <thead>
+                        <tr>
+                            <th>Sun</th>
+                            <th>Mon</th>
+                            <th>Tue</th>
+                            <th>Wed</th>
+                            <th>Thu</th>
+                            <th>Fri</th>
+                            <th>Sat</th>
+                        </tr>
+                    </thead>
+                    <tbody id="calendar-body">
+                        <!-- Calendar will be populated by JavaScript -->
+                    </tbody>
+                </table>
+            </div>
+
+            <div class="sidebar">
+                <div class="card">
+                    <h3><i class="fas fa-bell"></i> Upcoming Events</h3>
+                    <div class="upcoming-events">
+                        <div class="event-item">
+                            <div class="event-icon live">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="event-details">
+                                <h4>Mathematics Live Session</h4>
+                                <p>Today, 10:00 AM</p>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-icon quiz">
+                                <i class="fas fa-pencil-alt"></i>
+                            </div>
+                            <div class="event-details">
+                                <h4>Physics Quiz</h4>
+                                <p>Tomorrow, 2:00 PM</p>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-icon deadline">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                            <div class="event-details">
+                                <h4>History Essay Submission</h4>
+                                <p>Oct 15, 11:59 PM</p>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-icon live">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="event-details">
+                                <h4>Chemistry Lab Session</h4>
+                                <p>Oct 16, 1:00 PM</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3><i class="fas fa-cog"></i> Notification Settings</h3>
+                    <div class="notification-settings">
+                        <div class="setting-item">
+                            <span>Weekly Email Reminders</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Live Class Notifications</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Quiz Alerts</span>
+                            <label class="toggle">
+                                <input type="checkbox" checked>
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                        <div class="setting-item">
+                            <span>Deadline Warnings</span>
+                            <label class="toggle">
+                                <input type="checkbox">
+                                <span class="slider"></span>
+                            </label>
+                        </div>
+                    </div>
+                </div>
+
+                
+            </div>
+        </div>
+    </div>
+
+    <!-- Event Details Modal -->
+    <div class="modal" id="event-modal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2>Event Details</h2>
+                <button class="close-modal">&times;</button>
+            </div>
+            <div class="event-form">
+                <div class="form-group">
+                    <label for="event-title">Event Title</label>
+                    <input type="text" id="event-title" value="Mathematics Live Session" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="event-date">Date & Time</label>
+                    <input type="text" id="event-date" value="October 12, 2023 - 10:00 AM" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="event-type">Event Type</label>
+                    <input type="text" id="event-type" value="Live Class" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="event-course">Course</label>
+                    <input type="text" id="event-course" value="Advanced Mathematics" readonly>
+                </div>
+                <div class="form-group">
+                    <label for="event-description">Description</label>
+                    <textarea id="event-description" rows="4" readonly>This session will cover differential equations and their applications in real-world problems. Please come prepared with questions from the last assignment.</textarea>
+                </div>
+                <div class="form-actions">
+                    <button class="btn btn-secondary close-modal">Close</button>
+                    <button class="btn btn-primary">Add to Personal Calendar</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Calendar generation
+        document.addEventListener('DOMContentLoaded', function() {
+            const calendarBody = document.getElementById('calendar-body');
+            const prevMonthBtn = document.getElementById('prev-month');
+            const nextMonthBtn = document.getElementById('next-month');
+            const eventModal = document.getElementById('event-modal');
+            const closeModalBtns = document.querySelectorAll('.close-modal');
+            
+            let currentDate = new Date();
+            let currentMonth = currentDate.getMonth();
+            let currentYear = currentDate.getFullYear();
+            
+            // Sample events data
+            const events = [
+                { date: new Date(currentYear, currentMonth, 5), title: 'Math Quiz', type: 'quiz' },
+                { date: new Date(currentYear, currentMonth, 8), title: 'Physics Live', type: 'live-class' },
+                { date: new Date(currentYear, currentMonth, 12), title: 'Essay Deadline', type: 'deadline' },
+                { date: new Date(currentYear, currentMonth, 15), title: 'Chemistry Lab', type: 'live-class' },
+                { date: new Date(currentYear, currentMonth, 18), title: 'History Quiz', type: 'quiz' },
+                { date: new Date(currentYear, currentMonth, 22), title: 'Project Submission', type: 'deadline' },
+                { date: new Date(currentYear, currentMonth, 25), title: 'Biology Session', type: 'live-class' },
+                { date: new Date(currentYear, currentMonth, 28), title: 'Final Exam', type: 'quiz' }
+            ];
+            
+            function generateCalendar(month, year) {
+                calendarBody.innerHTML = '';
+                
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                const startingDay = firstDay.getDay();
+                const monthLength = lastDay.getDate();
+                
+                let date = 1;
+                for (let i = 0; i < 6; i++) {
+                    const row = document.createElement('tr');
+                    
+                    for (let j = 0; j < 7; j++) {
+                        const cell = document.createElement('td');
+                        
+                        if (i === 0 && j < startingDay) {
+                            // Empty cells before the first day of the month
+                            const prevMonth = new Date(year, month, 0);
+                            const prevMonthDate = prevMonth.getDate() - (startingDay - j - 1);
+                            cell.innerHTML = `<span class="calendar-date">${prevMonthDate}</span>`;
+                            cell.classList.add('other-month');
+                        } else if (date > monthLength) {
+                            // Empty cells after the last day of the month
+                            const nextMonthDate = date - monthLength;
+                            cell.innerHTML = `<span class="calendar-date">${nextMonthDate}</span>`;
+                            cell.classList.add('other-month');
+                            date++;
+                        } else {
+                            // Current month dates
+                            const currentDate = new Date(year, month, date);
+                            const isToday = currentDate.toDateString() === new Date().toDateString();
+                            
+                            if (isToday) {
+                                cell.classList.add('today');
+                            }
+                            
+                            cell.innerHTML = `<span class="calendar-date">${date}</span>`;
+                            
+                            // Add events for this date
+                            const dayEvents = events.filter(event => 
+                                event.date.getDate() === date && 
+                                event.date.getMonth() === month && 
+                                event.date.getFullYear() === year
+                            );
+                            
+                            dayEvents.forEach(event => {
+                                const eventElement = document.createElement('div');
+                                eventElement.classList.add('event', event.type);
+                                eventElement.textContent = event.title;
+                                cell.appendChild(eventElement);
+                            });
+                            
+                            // Add click event to open modal
+                            cell.addEventListener('click', function() {
+                                if (dayEvents.length > 0) {
+                                    eventModal.style.display = 'flex';
+                                }
+                            });
+                            
+                            date++;
+                        }
+                        
+                        row.appendChild(cell);
+                    }
+                    
+                    calendarBody.appendChild(row);
+                    
+                    // Stop creating rows if we've run out of days
+                    if (date > monthLength) {
+                        break;
+                    }
+                }
+                
+                // Update calendar header
+                document.querySelector('.calendar-header h2').textContent = 
+                    `${getMonthName(month)} ${year}`;
+            }
+            
+            function getMonthName(month) {
+                const months = [
+                    'January', 'February', 'March', 'April', 'May', 'June',
+                    'July', 'August', 'September', 'October', 'November', 'December'
+                ];
+                return months[month];
+            }
+            
+            // Navigation
+            prevMonthBtn.addEventListener('click', function() {
+                currentMonth--;
+                if (currentMonth < 0) {
+                    currentMonth = 11;
+                    currentYear--;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            nextMonthBtn.addEventListener('click', function() {
+                currentMonth++;
+                if (currentMonth > 11) {
+                    currentMonth = 0;
+                    currentYear++;
+                }
+                generateCalendar(currentMonth, currentYear);
+            });
+            
+            // Close modal
+            closeModalBtns.forEach(btn => {
+                btn.addEventListener('click', function() {
+                    eventModal.style.display = 'none';
+                });
+            });
+            
+            // Initial calendar generation
+            generateCalendar(currentMonth, currentYear);
+        });
+    </script>
+</body>
+</html>

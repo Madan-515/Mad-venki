@@ -1,0 +1,340 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Report a Problem</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #e0d7ea 0%, #a0b9e6 100%);
+            color: #333;
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            padding: 25px 30px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+        }
+
+        .header p {
+            font-size: 16px;
+            opacity: 0.9;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #444;
+        }
+
+        input, select, textarea {
+            width: 100%;
+            padding: 12px 15px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 16px;
+            transition: all 0.3s;
+        }
+
+        input:focus, select:focus, textarea:focus {
+            outline: none;
+            border-color: #6a11cb;
+            box-shadow: 0 0 0 3px rgba(106, 17, 203, 0.1);
+        }
+
+        textarea {
+            min-height: 120px;
+            resize: vertical;
+        }
+
+        .radio-group {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 15px;
+            margin-top: 10px;
+        }
+
+        .radio-option {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            cursor: pointer;
+        }
+
+        .radio-option input {
+            width: auto;
+        }
+
+        .priority-indicator {
+            display: inline-block;
+            width: 12px;
+            height: 12px;
+            border-radius: 50%;
+            margin-right: 5px;
+        }
+
+        .low { background-color: #4CAF50; }
+        .medium { background-color: #FF9800; }
+        .high { background-color: #F44336; }
+
+        .btn-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 14px 35px;
+            border: none;
+            border-radius: 50px;
+            font-size: 16px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(to right, #4a00e0, #8e2de2);
+            color: white;
+            box-shadow: 0 4px 15px rgba(106, 17, 203, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 20px rgba(106, 17, 203, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .success-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: rgba(0, 0, 0, 0.7);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .success-content {
+            background-color: white;
+            padding: 40px;
+            border-radius: 15px;
+            text-align: center;
+            max-width: 450px;
+            width: 90%;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.3);
+            animation: popIn 0.5s;
+        }
+
+        .success-icon {
+            font-size: 70px;
+            color: #4CAF50;
+            margin-bottom: 20px;
+        }
+
+        .success-content h2 {
+            color: #4CAF50;
+            margin-bottom: 15px;
+        }
+
+        .success-content p {
+            margin-bottom: 25px;
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .btn-success {
+            background: linear-gradient(to right, #4CAF50, #45a049);
+            color: white;
+        }
+
+        @keyframes popIn {
+            0% { transform: scale(0.5); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #777;
+            font-size: 14px;
+            border-top: 1px solid #eee;
+        }
+
+        @media (max-width: 600px) {
+            .header h1 {
+                font-size: 22px;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .radio-group {
+                flex-direction: column;
+                gap: 10px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1><i class="fas fa-flag"></i> Report a Problem</h1>
+            <p>Help us improve by reporting issues with courses or instructors</p>
+        </div>
+        
+        <div class="content">
+            <form id="reportForm">
+                <div class="form-group">
+                    <label for="reportType">Report Type</label>
+                    <select id="reportType" required>
+                        <option value="" disabled selected>Select the type of issue</option>
+                        <option value="course">Course Content Issue</option>
+                        <option value="instructor">Instructor Related Issue</option>
+                        <option value="technical">Technical Problem</option>
+                        <option value="other">Other Issue</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="course">Course/Instructor</label>
+                    <select id="course" required>
+                        <option value="" disabled selected>Select course or instructor</option>
+                        <option value="web-dev">Web Development Fundamentals</option>
+                        <option value="data-science">Data Science with Python</option>
+                        <option value="design">UI/UX Design Principles</option>
+                        <option value="math">Advanced Mathematics</option>
+                    </select>
+                </div>
+                
+                <div class="form-group">
+                    <label for="priority">Priority Level</label>
+                    <div class="radio-group">
+                        <div class="radio-option">
+                            <input type="radio" id="low" name="priority" value="low" required>
+                            <label for="low"><span class="priority-indicator low"></span> Low Priority</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="medium" name="priority" value="medium">
+                            <label for="medium"><span class="priority-indicator medium"></span> Medium Priority</label>
+                        </div>
+                        <div class="radio-option">
+                            <input type="radio" id="high" name="priority" value="high">
+                            <label for="high"><span class="priority-indicator high"></span> High Priority</label>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="form-group">
+                    <label for="description">Problem Description</label>
+                    <textarea id="description" placeholder="Please provide a detailed description of the issue..." required></textarea>
+                </div>
+                
+                <div class="form-group">
+                    <label for="suggestions">Suggestions (Optional)</label>
+                    <textarea id="suggestions" placeholder="Any suggestions for improvement?"></textarea>
+                </div>
+                
+                <div class="btn-container">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-paper-plane"></i> Submit Report
+                    </button>
+                </div>
+            </form>
+        </div>
+        
+        <div class="footer">
+            <p>Your report will be reviewed by our admin team within 24-48 hours.</p>
+        </div>
+    </div>
+    
+    <div class="success-modal" id="successModal">
+        <div class="success-content">
+            <div class="success-icon">
+                <i class="fas fa-check-circle"></i>
+            </div>
+            <h2>Report Submitted Successfully!</h2>
+            <p>Thank you for helping us improve. Our admin team has received your report and will review it shortly.</p>
+            <button class="btn btn-primary btn-success" id="closeModal">Close</button>
+        </div>
+    </div>
+
+    <script>
+        document.getElementById('reportForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            
+            // In a real application, you would send the form data to the server here
+            // For this demo, we'll just show the success message
+            
+            // Show success modal
+            document.getElementById('successModal').style.display = 'flex';
+            
+            // Reset form
+            document.getElementById('reportForm').reset();
+        });
+        
+        document.getElementById('closeModal').addEventListener('click', function() {
+            document.getElementById('successModal').style.display = 'none';
+        });
+        
+        // Close modal when clicking outside the content
+        window.addEventListener('click', function(e) {
+            const modal = document.getElementById('successModal');
+            if (e.target === modal) {
+                modal.style.display = 'none';
+            }
+        });
+    </script>
+</body>
+</html>

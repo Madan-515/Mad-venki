@@ -1,0 +1,496 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Notepad</title>
+    <style>
+        :root {
+            --primary-color: #6a11cb;
+            --secondary-color: #2575fc;
+            --accent-color: #ff7eb3;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark-color);
+        }
+
+        .lesson-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
+        }
+
+        .lesson-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 20px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .lesson-title {
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+
+        .lesson-content {
+            padding: 30px;
+            line-height: 1.6;
+        }
+
+        .notepad-container {
+            margin-top: 30px;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.08);
+        }
+
+        .notepad-header {
+            background: linear-gradient(to right, var(--accent-color), #ff9a9e);
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .notepad-title {
+            font-size: 1.4rem;
+            font-weight: 500;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .notepad-title i {
+            font-size: 1.2rem;
+        }
+
+        .notepad-controls {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .btn-primary {
+            background: var(--primary-color);
+            color: white;
+        }
+
+        .btn-success {
+            background: var(--success-color);
+            color: white;
+        }
+
+        .btn-warning {
+            background: var(--warning-color);
+            color: var(--dark-color);
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+        }
+
+        .notepad-body {
+            background: white;
+            padding: 0;
+        }
+
+        .notepad-textarea {
+            width: 100%;
+            height: 300px;
+            border: none;
+            padding: 20px;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: vertical;
+            background: linear-gradient(to bottom, transparent 95%, #f0f0f0 95%);
+            background-size: 100% 30px;
+            outline: none;
+            font-family: 'Courier New', monospace;
+        }
+
+        .notepad-footer {
+            background: #f8f9fa;
+            padding: 10px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+
+        .status-dot.saving {
+            background: var(--warning-color);
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+
+        .character-count {
+            font-weight: 500;
+        }
+
+        /* Export options modal */
+        .modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0, 0, 0, 0.5);
+            z-index: 1000;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .modal-content {
+            background: white;
+            padding: 30px;
+            border-radius: 10px;
+            width: 90%;
+            max-width: 500px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        }
+
+        .modal-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .modal-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+            color: var(--primary-color);
+        }
+
+        .close-modal {
+            background: none;
+            border: none;
+            font-size: 1.5rem;
+            cursor: pointer;
+            color: #6c757d;
+        }
+
+        .export-options {
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .export-option {
+            padding: 15px;
+            border: 2px solid #e9ecef;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .export-option:hover {
+            border-color: var(--primary-color);
+            background: #f8f9fa;
+        }
+
+        .export-option i {
+            font-size: 1.5rem;
+            color: var(--primary-color);
+        }
+
+        .export-option-text h3 {
+            margin-bottom: 5px;
+            font-size: 1.1rem;
+        }
+
+        .export-option-text p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+
+        /* Toast notification */
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 15px 25px;
+            background: var(--success-color);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s ease;
+            z-index: 1001;
+        }
+
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        /* Responsive design */
+        @media (max-width: 768px) {
+            .lesson-header, .notepad-header {
+                flex-direction: column;
+                gap: 15px;
+                align-items: flex-start;
+            }
+
+            .notepad-controls {
+                width: 100%;
+                justify-content: space-between;
+            }
+
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="lesson-container">
+        <div class="lesson-header">
+            <h1 class="lesson-title">Lesson 5: Advanced JavaScript Concepts</h1>
+            
+        </div>
+        
+        <div class="lesson-content">
+            <h2>Closures and Scope</h2>
+            <p>In this lesson, we'll explore JavaScript closures and how they relate to scope. Closures are a fundamental concept that every JavaScript developer should understand.</p>
+            
+            <p>A closure is the combination of a function and the lexical environment within which that function was declared. This environment consists of any local variables that were in-scope at the time the closure was created.</p>
+            
+            <div class="notepad-container">
+                <div class="notepad-header">
+                    <div class="notepad-title">
+                        <i>📝</i> My Personal Notes
+                    </div>
+                    <div class="notepad-controls">
+                        <button class="btn btn-primary" id="exportBtn">
+                            <i>📤</i> Export Notes
+                        </button>
+                        <button class="btn btn-success" id="clearBtn">
+                            <i>🗑️</i> Clear
+                        </button>
+                    </div>
+                </div>
+                <div class="notepad-body">
+                    <textarea class="notepad-textarea" id="noteText" placeholder="Start typing your notes here... They will be automatically saved!"></textarea>
+                </div>
+                <div class="notepad-footer">
+                    <div class="status-indicator">
+                        <div class="status-dot" id="statusDot"></div>
+                        <span id="statusText">All changes saved</span>
+                    </div>
+                    <div class="character-count">
+                        <span id="charCount">0</span> characters
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Export Modal -->
+    <div class="modal" id="exportModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h2 class="modal-title">Export Notes</h2>
+                <button class="close-modal" id="closeModal">&times;</button>
+            </div>
+            <div class="export-options">
+                <div class="export-option" id="exportTxt">
+                    <i>📄</i>
+                    <div class="export-option-text">
+                        <h3>Export as Text File</h3>
+                        <p>Download your notes as a .txt file</p>
+                    </div>
+                </div>
+                <div class="export-option" id="exportPdf">
+                    <i>📋</i>
+                    <div class="export-option-text">
+                        <h3>Export as PDF</h3>
+                        <p>Download your notes as a PDF document</p>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Toast Notification -->
+    <div class="toast" id="toast"></div>
+
+    <script>
+        // DOM Elements
+        const noteTextarea = document.getElementById('noteText');
+        const statusDot = document.getElementById('statusDot');
+        const statusText = document.getElementById('statusText');
+        const charCount = document.getElementById('charCount');
+        const exportBtn = document.getElementById('exportBtn');
+        const clearBtn = document.getElementById('clearBtn');
+        const exportModal = document.getElementById('exportModal');
+        const closeModal = document.getElementById('closeModal');
+        const exportTxt = document.getElementById('exportTxt');
+        const exportPdf = document.getElementById('exportPdf');
+        const toast = document.getElementById('toast');
+
+        // Auto-save functionality
+        let autoSaveTimeout;
+        const AUTO_SAVE_DELAY = 2000; // 2 seconds
+
+        noteTextarea.addEventListener('input', () => {
+            // Update character count
+            charCount.textContent = noteTextarea.value.length;
+            
+            // Show saving status
+            statusDot.classList.add('saving');
+            statusText.textContent = 'Saving...';
+            
+            // Clear previous timeout
+            clearTimeout(autoSaveTimeout);
+            
+            // Set new timeout for auto-save
+            autoSaveTimeout = setTimeout(saveNotes, AUTO_SAVE_DELAY);
+        });
+
+        function saveNotes() {
+            // In a real application, this would send data to a server
+            // For this demo, we'll use localStorage
+            localStorage.setItem('courseNotes', noteTextarea.value);
+            
+            // Update status
+            statusDot.classList.remove('saving');
+            statusText.textContent = 'All changes saved';
+            
+            // Show confirmation toast
+            showToast('Notes saved successfully!');
+        }
+
+        // Load saved notes on page load
+        window.addEventListener('DOMContentLoaded', () => {
+            const savedNotes = localStorage.getItem('courseNotes');
+            if (savedNotes) {
+                noteTextarea.value = savedNotes;
+                charCount.textContent = savedNotes.length;
+            }
+        });
+
+        // Export functionality
+        exportBtn.addEventListener('click', () => {
+            exportModal.style.display = 'flex';
+        });
+
+        closeModal.addEventListener('click', () => {
+            exportModal.style.display = 'none';
+        });
+
+        // Close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            if (e.target === exportModal) {
+                exportModal.style.display = 'none';
+            }
+        });
+
+        exportTxt.addEventListener('click', () => {
+            exportAsText();
+            exportModal.style.display = 'none';
+        });
+
+        exportPdf.addEventListener('click', () => {
+            // In a real application, this would generate a PDF
+            showToast('PDF export feature would be implemented in a real application');
+            exportModal.style.display = 'none';
+        });
+
+        function exportAsText() {
+            const notes = noteTextarea.value;
+            const blob = new Blob([notes], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'course-notes.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Notes exported as text file!');
+        }
+
+        // Clear notes functionality
+        clearBtn.addEventListener('click', () => {
+            if (confirm('Are you sure you want to clear all notes? This action cannot be undone.')) {
+                noteTextarea.value = '';
+                charCount.textContent = '0';
+                localStorage.removeItem('courseNotes');
+                showToast('Notes cleared successfully!');
+            }
+        });
+
+        // Toast notification function
+        function showToast(message) {
+            toast.textContent = message;
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+    </script>
+</body>
+</html>
