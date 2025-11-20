@@ -1,0 +1,475 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile Menu with Semicircle Design</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .profile-container {
+            position: relative;
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
+            padding: 30px;
+            overflow: hidden;
+        }
+        
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #eee;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: #3498db;
+        }
+        
+        .profile-button {
+            position: relative;
+            width: 60px;
+            height: 60px;
+            border-radius: 80%;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: bold;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 100;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+        }
+        
+        .profile-button:hover {
+            transform: scale(1.05);
+        }
+        
+        .profile-menu {
+            position: absolute;
+            top: 100px;
+            right: 30px;
+            width: 350px;
+            height: 240px;
+            display: none;
+            z-index: 99;
+        }
+        
+        .profile-button:hover + .profile-menu,
+        .profile-menu:hover {
+            display: block;
+        }
+        
+        .semicircle {
+            position: absolute;
+            top: 0;
+            right: 0;
+            width: 450px;
+            height: 240px;
+            background: white;
+            border-radius: 0 0 0 450px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-end;
+            padding: 20px;
+            transform-origin: top right;
+            animation: fadeIn 0.3s ease;
+        }
+        
+        .menu-items {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            margin-left: 40px;
+            margin-bottom: 20px;
+        }
+        
+        .menu-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 10px;
+            border-radius: 10px;
+            transition: all 0.2s ease;
+            cursor: pointer;
+        }
+        
+        .menu-item:hover {
+            background-color: #f5f7fa;
+            transform: translateY(-5px);
+        }
+        
+        .menu-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            margin-bottom: 5px;
+            font-size: 18px;
+        }
+        
+        .menu-text {
+            font-size: 12px;
+            text-align: center;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+        
+        .logout-container {
+            display: flex;
+            justify-content: center;
+            margin-top: 10px;
+            padding-top: 15px;
+            border-top: 1px solid #eee;
+        }
+        
+        .logout-button {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            padding: 10px 20px;
+            background: linear-gradient(135deg, #e74c3c, #c0392b);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            box-shadow: 0 4px 10px rgba(231, 76, 60, 0.3);
+        }
+        
+        .logout-button:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 6px 15px rgba(231, 76, 60, 0.4);
+        }
+        
+        .profile-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+        }
+        
+        .avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #3498db, #2c3e50);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-size: 28px;
+            font-weight: bold;
+            margin-right: 20px;
+        }
+        
+        .user-details h2 {
+            color: #2c3e50;
+            margin-bottom: 5px;
+        }
+        
+        .user-details p {
+            color: #7f8c8d;
+            margin-bottom: 10px;
+        }
+        
+        .content {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 30px;
+        }
+        
+        .section {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 4px 10px rgba(0, 0, 0, 0.05);
+        }
+        
+        .section h3 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid #eaeaea;
+        }
+        
+        .section ul {
+            list-style-type: none;
+        }
+        
+        .section li {
+            padding: 10px 0;
+            color: #34495e;
+            border-bottom: 1px solid #f0f0f0;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+        
+        .section li:hover {
+            color: #3498db;
+            padding-left: 5px;
+        }
+        
+        .section li:last-child {
+            border-bottom: none;
+        }
+        
+        @keyframes fadeIn {
+            from {
+                opacity: 0;
+                transform: scale(0.9);
+            }
+            to {
+                opacity: 1;
+                transform: scale(1);
+            }
+        }
+        
+        /* Responsive improvements */
+        @media (max-width: 768px) {
+            .content {
+                grid-template-columns: 1fr;
+            }
+            
+            .profile-menu {
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none;
+                z-index: 999;
+            }
+            
+            .semicircle {
+                position: absolute;
+                top: 80px;
+                right: 20px;
+                width: 300px;
+                height: auto;
+                min-height: 300px;
+                border-radius: 0 0 0 300px;
+                padding: 25px 20px 20px;
+                justify-content: flex-start;
+            }
+            
+            .menu-items {
+                margin-left: 20px;
+                margin-bottom: 15px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .menu-item {
+                padding: 8px;
+            }
+            
+            .menu-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            .menu-text {
+                font-size: 11px;
+            }
+            
+            .logout-container {
+                margin-top: 5px;
+                padding-top: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 20px 15px;
+            }
+            
+            .semicircle {
+                width: 280px;
+                border-radius: 0 0 0 280px;
+            }
+            
+            .menu-items {
+                margin-left: 15px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .menu-text {
+                font-size: 10px;
+            }
+            
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="profile-container">
+        <div class="header">
+            <div class="logo">Bildung</div>
+            <div class="profile-button">MK</div>
+            <div class="profile-menu">
+                <div class="semicircle">
+                    <div class="menu-items">
+                        <div class="menu-item">
+                            <div class="menu-icon">👤</div>
+                            <div class="menu-text">Profile</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">📚</div>
+                            <div class="menu-text">Create New Course</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">📊</div>
+                            <div class="menu-text">My Activity</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">📅</div>
+                            <div class="menu-text">My Schedules</div>
+                        </div>
+                         <div class="menu-item">
+                            <div class="menu-icon">👨‍🎓</div>
+                            <div class="menu-text">My Students</div>
+                         </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">💳</div>
+                            <div class="menu-text">Earnings & Payments</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">🛒</div>
+                            <div class="menu-text">My Cart</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">⚙️</div>
+                            <div class="menu-text">Account Settings</div>
+                        </div>
+                        <div class="menu-item">
+                            <div class="menu-icon">🔔</div>
+                            <div class="menu-text">Notifications</div>
+                        </div>
+                    </div>
+                    <div class="logout-container">
+                        <button class="logout-button">
+                            <span>🚪</span>
+                            Logout
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+        
+        <div class="profile-info">
+            <div class="avatar">MK</div>
+            <div class="user-details">
+                <h2>Madan</h2>
+                <p>Madan@gmail.com</p>
+                <p>Welcome to your learning dashboard!</p>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="section">
+                <h3>Account</h3>
+                <ul>
+                    <li>Public Profile</li>
+                    <li>My Learnings</li>
+                    <li>My Cart</li>
+                    <li>Settings</li>
+                    <li>Notifications</li>
+                    <li>Payments</li>
+                </ul>
+            </div>
+            
+            <div class="section">
+                <h3>Support</h3>
+                <ul>
+                    <li>Help & Support</li>
+                    <li>Feedback</li>
+                    <li>Contact Us</li>
+                    <li>FAQs</li>
+                    <li>Report an Issue</li>
+                </ul>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Add some interactive functionality
+        document.querySelectorAll('.menu-item, .section li').forEach(item => {
+            item.addEventListener('click', function() {
+                const text = this.querySelector('.menu-text') ? 
+                    this.querySelector('.menu-text').textContent : 
+                    this.textContent;
+                alert(`You clicked on: ${text}`);
+            });
+        });
+        
+        // Add logout functionality
+        document.querySelector('.logout-button').addEventListener('click', function() {
+            if(confirm('Are you sure you want to logout?')) {
+                alert('You have been logged out successfully!');
+                // In a real application, you would redirect to logout page or clear session
+                // window.location.href = '/logout';
+            }
+        });
+        
+        // Close menu when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const profileButton = document.querySelector('.profile-button');
+            const profileMenu = document.querySelector('.profile-menu');
+            const isClickInsideMenu = profileMenu.contains(event.target);
+            const isClickOnButton = profileButton.contains(event.target);
+            
+            if (!isClickInsideMenu && !isClickOnButton && window.innerWidth <= 768) {
+                profileMenu.style.display = 'none';
+            }
+        });
+        
+        // Toggle menu on button click for mobile
+        document.querySelector('.profile-button').addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                const profileMenu = document.querySelector('.profile-menu');
+                profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
+            }
+        });
+    </script>
+</body>
+</html>
