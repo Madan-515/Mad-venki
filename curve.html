@@ -73,7 +73,7 @@
             top: 100px;
             right: 30px;
             width: 350px;
-            height: 240px; /* Increased height to accommodate logout button */
+            height: 240px;
             display: none;
             z-index: 99;
         }
@@ -88,7 +88,7 @@
             top: 0;
             right: 0;
             width: 450px;
-            height: 240px; /* Increased height to accommodate logout button */
+            height: 240px;
             background: white;
             border-radius: 0 0 0 450px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.15);
@@ -254,17 +254,89 @@
             }
         }
         
+        /* Responsive improvements */
         @media (max-width: 768px) {
             .content {
                 grid-template-columns: 1fr;
             }
             
             .profile-menu {
-                right: 10px;
+                position: fixed;
+                top: 0;
+                right: 0;
+                width: 100vw;
+                height: 100vh;
+                background-color: rgba(0, 0, 0, 0.5);
+                display: none;
+                z-index: 999;
             }
             
             .semicircle {
-                width: 400px;
+                position: absolute;
+                top: 80px;
+                right: 20px;
+                width: 300px;
+                height: auto;
+                min-height: 300px;
+                border-radius: 0 0 0 300px;
+                padding: 25px 20px 20px;
+                justify-content: flex-start;
+            }
+            
+            .menu-items {
+                margin-left: 20px;
+                margin-bottom: 15px;
+                grid-template-columns: repeat(2, 1fr);
+            }
+            
+            .menu-item {
+                padding: 8px;
+            }
+            
+            .menu-icon {
+                width: 35px;
+                height: 35px;
+                font-size: 16px;
+            }
+            
+            .menu-text {
+                font-size: 11px;
+            }
+            
+            .logout-container {
+                margin-top: 5px;
+                padding-top: 10px;
+            }
+        }
+        
+        @media (max-width: 480px) {
+            .profile-container {
+                padding: 20px 15px;
+            }
+            
+            .semicircle {
+                width: 280px;
+                border-radius: 0 0 0 280px;
+            }
+            
+            .menu-items {
+                margin-left: 15px;
+                grid-template-columns: repeat(2, 1fr);
+                gap: 8px;
+            }
+            
+            .menu-text {
+                font-size: 10px;
+            }
+            
+            .profile-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .avatar {
+                margin-right: 0;
+                margin-bottom: 15px;
             }
         }
     </style>
@@ -283,18 +355,18 @@
                         </div>
                         <div class="menu-item">
                             <div class="menu-icon">📚</div>
-                            <div class="menu-text">Create New course</div>
+                            <div class="menu-text">Create New Course</div>
                         </div>
                         <div class="menu-item">
-                            <div class="menu-icon"></div>
+                            <div class="menu-icon">📊</div>
                             <div class="menu-text">My Activity</div>
                         </div>
                         <div class="menu-item">
-                            <div class="menu-icon"></div>
+                            <div class="menu-icon">📅</div>
                             <div class="menu-text">My Schedules</div>
                         </div>
                          <div class="menu-item">
-                            <div class="menu-icon"></div>
+                            <div class="menu-icon">👨‍🎓</div>
                             <div class="menu-text">My Students</div>
                          </div>
                         <div class="menu-item">
@@ -378,13 +450,26 @@
                 // window.location.href = '/logout';
             }
         });
+        
+        // Close menu when clicking outside on mobile
+        document.addEventListener('click', function(event) {
+            const profileButton = document.querySelector('.profile-button');
+            const profileMenu = document.querySelector('.profile-menu');
+            const isClickInsideMenu = profileMenu.contains(event.target);
+            const isClickOnButton = profileButton.contains(event.target);
+            
+            if (!isClickInsideMenu && !isClickOnButton && window.innerWidth <= 768) {
+                profileMenu.style.display = 'none';
+            }
+        });
+        
+        // Toggle menu on button click for mobile
+        document.querySelector('.profile-button').addEventListener('click', function() {
+            if (window.innerWidth <= 768) {
+                const profileMenu = document.querySelector('.profile-menu');
+                profileMenu.style.display = profileMenu.style.display === 'block' ? 'none' : 'block';
+            }
+        });
     </script>
 </body>
-
 </html>
-
-
-
-
-
-
