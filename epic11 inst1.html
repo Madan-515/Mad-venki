@@ -1,0 +1,736 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Schedule Manager</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        :root {
+            --primary: #4361ee;
+            --primary-light: #4895ef;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --danger: #f72585;
+            --warning: #f8961e;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gray: #6c757d;
+            --border-radius: 12px;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fb;
+            color: var(--dark);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 30px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 1.8rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .user-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 25px;
+        }
+
+        .calendar-section {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+
+        .calendar-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .calendar-nav {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .calendar-nav button {
+            background: var(--primary);
+            color: white;
+            border: none;
+            width: 36px;
+            height: 36px;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .calendar-nav button:hover {
+            background: var(--secondary);
+        }
+
+        .calendar-title {
+            font-size: 1.4rem;
+            font-weight: 600;
+        }
+
+        .calendar-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border-radius: 6px;
+            border: none;
+            font-weight: 500;
+            cursor: pointer;
+            transition: var(--transition);
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-primary {
+            background: var(--primary);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            background: var(--secondary);
+        }
+
+        .btn-outline {
+            background: transparent;
+            border: 1px solid var(--primary);
+            color: var(--primary);
+        }
+
+        .btn-outline:hover {
+            background: rgba(67, 97, 238, 0.1);
+        }
+
+        .calendar-grid {
+            display: grid;
+            grid-template-columns: repeat(7, 1fr);
+            gap: 8px;
+            margin-bottom: 20px;
+        }
+
+        .calendar-day-header {
+            text-align: center;
+            padding: 10px;
+            font-weight: 600;
+            color: var(--gray);
+            font-size: 0.9rem;
+        }
+
+        .calendar-day {
+            background: #f8f9fa;
+            border-radius: 8px;
+            padding: 10px;
+            min-height: 100px;
+            display: flex;
+            flex-direction: column;
+            transition: var(--transition);
+            border: 1px solid transparent;
+        }
+
+        .calendar-day:hover {
+            background: #e9ecef;
+            border-color: var(--primary-light);
+        }
+
+        .calendar-day.other-month {
+            color: #adb5bd;
+            background: #f1f3f5;
+        }
+
+        .calendar-day.today {
+            background: rgba(67, 97, 238, 0.1);
+            border: 1px solid var(--primary);
+        }
+
+        .day-number {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .event {
+            font-size: 0.75rem;
+            padding: 4px 6px;
+            border-radius: 4px;
+            margin-top: 4px;
+            color: white;
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .event.live-class {
+            background: var(--primary);
+        }
+
+        .event.deadline {
+            background: var(--danger);
+        }
+
+        .sidebar {
+            display: flex;
+            flex-direction: column;
+            gap: 25px;
+        }
+
+        .card {
+            background: white;
+            border-radius: var(--border-radius);
+            padding: 20px;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .card-title {
+            font-size: 1.1rem;
+            font-weight: 600;
+        }
+
+        .upcoming-events {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .event-item {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            padding: 12px;
+            border-radius: 8px;
+            background: #f8f9fa;
+            transition: var(--transition);
+        }
+
+        .event-item:hover {
+            background: #e9ecef;
+        }
+
+        .event-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.2rem;
+        }
+
+        .event-icon.live {
+            background: var(--primary);
+        }
+
+        .event-icon.deadline {
+            background: var(--danger);
+        }
+
+        .event-details {
+            flex: 1;
+        }
+
+        .event-title {
+            font-weight: 600;
+            margin-bottom: 4px;
+        }
+
+        .event-time {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-label {
+            display: block;
+            margin-bottom: 6px;
+            font-weight: 500;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 10px 12px;
+            border: 1px solid #ced4da;
+            border-radius: 6px;
+            font-size: 1rem;
+            transition: var(--transition);
+        }
+
+        .form-control:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .checkbox-group {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .checkbox-group input {
+            width: 18px;
+            height: 18px;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: var(--border-radius);
+            box-shadow: var(--shadow);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: var(--transition);
+            z-index: 1000;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification-icon {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background: var(--success);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .notification-content {
+            flex: 1;
+        }
+
+        .notification-title {
+            font-weight: 600;
+            margin-bottom: 2px;
+        }
+
+        .notification-message {
+            font-size: 0.85rem;
+            color: var(--gray);
+        }
+
+        @media (max-width: 992px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        @media (max-width: 768px) {
+            .calendar-grid {
+                grid-template-columns: repeat(7, 1fr);
+                gap: 4px;
+            }
+            
+            .calendar-day {
+                min-height: 80px;
+                padding: 6px;
+            }
+            
+            .event {
+                font-size: 0.7rem;
+                padding: 2px 4px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-calendar-alt"></i>
+                <span>Course Scheduler</span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <span>Prof. John Doe</span>
+            </div>
+        </header>
+
+        <div class="dashboard">
+            <div class="calendar-section">
+                <div class="calendar-header">
+                    <div class="calendar-nav">
+                        <button id="prev-month"><i class="fas fa-chevron-left"></i></button>
+                        <h2 class="calendar-title" id="current-month">October 2023</h2>
+                        <button id="next-month"><i class="fas fa-chevron-right"></i></button>
+                    </div>
+                    <div class="calendar-actions">
+                        <button class="btn btn-outline" id="today-btn">
+                            <i class="fas fa-calendar-day"></i> Today
+                        </button>
+                        <button class="btn btn-primary" id="add-event-btn">
+                            <i class="fas fa-plus"></i> Add Event
+                        </button>
+                    </div>
+                </div>
+
+                <div class="calendar-grid" id="calendar-days">
+                    <!-- Calendar days will be generated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="sidebar">
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Upcoming Events</h3>
+                        <span class="badge">5</span>
+                    </div>
+                    <div class="upcoming-events">
+                        <div class="event-item">
+                            <div class="event-icon live">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-title">Introduction to JavaScript</div>
+                                <div class="event-time">Today, 10:00 AM - 11:30 AM</div>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-icon deadline">
+                                <i class="fas fa-flag"></i>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-title">Assignment 1 Due</div>
+                                <div class="event-time">Tomorrow, 11:59 PM</div>
+                            </div>
+                        </div>
+                        <div class="event-item">
+                            <div class="event-icon live">
+                                <i class="fas fa-video"></i>
+                            </div>
+                            <div class="event-details">
+                                <div class="event-title">Advanced CSS Techniques</div>
+                                <div class="event-time">Oct 25, 2:00 PM - 3:30 PM</div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <div class="card-header">
+                        <h3 class="card-title">Add New Event</h3>
+                    </div>
+                    <form id="event-form">
+                        <div class="form-group">
+                            <label class="form-label" for="event-title">Event Title</label>
+                            <input type="text" class="form-control" id="event-title" placeholder="Enter event title" required>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="event-type">Event Type</label>
+                            <select class="form-control" id="event-type" required>
+                                <option value="">Select event type</option>
+                                <option value="live-class">Live Class</option>
+                                <option value="deadline">Deadline</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <label class="form-label" for="event-date">Date</label>
+                            <input type="date" class="form-control" id="event-date" required>
+                        </div>
+                        <div class="form-group" id="time-group">
+                            <label class="form-label" for="event-time">Time</label>
+                            <input type="time" class="form-control" id="event-time">
+                        </div>
+                        <div class="checkbox-group">
+                            <input type="checkbox" id="notify-students" checked>
+                            <label for="notify-students">Send notification to students</label>
+                        </div>
+                        <button type="submit" class="btn btn-primary" style="width: 100%; margin-top: 15px;">
+                            <i class="fas fa-calendar-plus"></i> Add to Calendar
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <div class="notification-icon">
+            <i class="fas fa-check"></i>
+        </div>
+        <div class="notification-content">
+            <div class="notification-title">Event Added Successfully</div>
+            <div class="notification-message">Students have been notified about the new event.</div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            // Calendar functionality
+            let currentDate = new Date();
+            const calendarDays = document.getElementById('calendar-days');
+            const currentMonthElement = document.getElementById('current-month');
+            const prevMonthBtn = document.getElementById('prev-month');
+            const nextMonthBtn = document.getElementById('next-month');
+            const todayBtn = document.getElementById('today-btn');
+            const eventForm = document.getElementById('event-form');
+            const eventTypeSelect = document.getElementById('event-type');
+            const timeGroup = document.getElementById('time-group');
+            const notification = document.getElementById('notification');
+
+            // Sample events data
+            let events = [
+                { id: 1, title: "Introduction to JavaScript", type: "live-class", date: new Date(2023, 9, 23, 10, 0), endTime: new Date(2023, 9, 23, 11, 30) },
+                { id: 2, title: "Assignment 1 Due", type: "deadline", date: new Date(2023, 9, 24, 23, 59) },
+                { id: 3, title: "Advanced CSS Techniques", type: "live-class", date: new Date(2023, 9, 25, 14, 0), endTime: new Date(2023, 9, 25, 15, 30) }
+            ];
+
+            // Initialize calendar
+            renderCalendar(currentDate);
+
+            // Event listeners
+            prevMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() - 1);
+                renderCalendar(currentDate);
+            });
+
+            nextMonthBtn.addEventListener('click', () => {
+                currentDate.setMonth(currentDate.getMonth() + 1);
+                renderCalendar(currentDate);
+            });
+
+            todayBtn.addEventListener('click', () => {
+                currentDate = new Date();
+                renderCalendar(currentDate);
+            });
+
+            eventTypeSelect.addEventListener('change', function() {
+                if (this.value === 'deadline') {
+                    timeGroup.style.display = 'none';
+                } else {
+                    timeGroup.style.display = 'block';
+                }
+            });
+
+            eventForm.addEventListener('submit', function(e) {
+                e.preventDefault();
+                
+                const title = document.getElementById('event-title').value;
+                const type = document.getElementById('event-type').value;
+                const date = new Date(document.getElementById('event-date').value);
+                const time = document.getElementById('event-time').value;
+                const notifyStudents = document.getElementById('notify-students').checked;
+                
+                if (type === 'live-class' && time) {
+                    const [hours, minutes] = time.split(':');
+                    date.setHours(parseInt(hours), parseInt(minutes));
+                } else if (type === 'deadline') {
+                    date.setHours(23, 59);
+                }
+                
+                // Create new event
+                const newEvent = {
+                    id: events.length + 1,
+                    title: title,
+                    type: type,
+                    date: new Date(date)
+                };
+                
+                events.push(newEvent);
+                
+                // Show notification
+                showNotification();
+                
+                // Reset form
+                eventForm.reset();
+                timeGroup.style.display = 'block';
+                
+                // Re-render calendar
+                renderCalendar(currentDate);
+            });
+
+            function renderCalendar(date) {
+                const year = date.getFullYear();
+                const month = date.getMonth();
+                
+                // Update month title
+                currentMonthElement.textContent = date.toLocaleDateString('en-US', { 
+                    month: 'long', 
+                    year: 'numeric' 
+                });
+                
+                // Clear calendar
+                calendarDays.innerHTML = '';
+                
+                // Add day headers
+                const dayNames = ['Sun', 'Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat'];
+                dayNames.forEach(day => {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day-header';
+                    dayElement.textContent = day;
+                    calendarDays.appendChild(dayElement);
+                });
+                
+                // Get first day of month and last day of month
+                const firstDay = new Date(year, month, 1);
+                const lastDay = new Date(year, month + 1, 0);
+                
+                // Get day of week for first day (0 = Sunday, 6 = Saturday)
+                const firstDayIndex = firstDay.getDay();
+                
+                // Get last day of previous month
+                const prevMonthLastDay = new Date(year, month, 0).getDate();
+                
+                // Add days from previous month
+                for (let i = firstDayIndex - 1; i >= 0; i--) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day other-month';
+                    dayElement.innerHTML = `<div class="day-number">${prevMonthLastDay - i}</div>`;
+                    calendarDays.appendChild(dayElement);
+                }
+                
+                // Add days of current month
+                const today = new Date();
+                for (let i = 1; i <= lastDay.getDate(); i++) {
+                    const dayElement = document.createElement('div');
+                    const dayDate = new Date(year, month, i);
+                    
+                    // Check if this is today
+                    if (dayDate.toDateString() === today.toDateString()) {
+                        dayElement.classList.add('today');
+                    }
+                    
+                    dayElement.className = 'calendar-day';
+                    dayElement.innerHTML = `<div class="day-number">${i}</div>`;
+                    
+                    // Add events for this day
+                    const dayEvents = events.filter(event => 
+                        event.date.getDate() === i && 
+                        event.date.getMonth() === month && 
+                        event.date.getFullYear() === year
+                    );
+                    
+                    dayEvents.forEach(event => {
+                        const eventElement = document.createElement('div');
+                        eventElement.className = `event ${event.type}`;
+                        
+                        let eventTime = '';
+                        if (event.type === 'live-class') {
+                            eventTime = event.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            if (event.endTime) {
+                                eventTime += ' - ' + event.endTime.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                            }
+                        } else if (event.type === 'deadline') {
+                            eventTime = 'Due: ' + event.date.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+                        }
+                        
+                        eventElement.innerHTML = `
+                            <i class="fas ${event.type === 'live-class' ? 'fa-video' : 'fa-flag'}"></i>
+                            <span>${event.title}</span>
+                        `;
+                        
+                        dayElement.appendChild(eventElement);
+                    });
+                    
+                    calendarDays.appendChild(dayElement);
+                }
+                
+                // Add days from next month to fill the grid
+                const totalCells = 42; // 6 rows * 7 days
+                const daysSoFar = firstDayIndex + lastDay.getDate();
+                const nextMonthDays = totalCells - daysSoFar;
+                
+                for (let i = 1; i <= nextMonthDays; i++) {
+                    const dayElement = document.createElement('div');
+                    dayElement.className = 'calendar-day other-month';
+                    dayElement.innerHTML = `<div class="day-number">${i}</div>`;
+                    calendarDays.appendChild(dayElement);
+                }
+            }
+
+            function showNotification() {
+                notification.classList.add('show');
+                
+                setTimeout(() => {
+                    notification.classList.remove('show');
+                }, 4000);
+            }
+        });
+    </script>
+</body>
+</html>
