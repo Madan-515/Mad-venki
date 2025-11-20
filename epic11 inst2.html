@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Feedback Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --gradient: linear-gradient(135deg, #4361ee, #3a0ca3);
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa, #c3cfe2);
+            min-height: 100vh;
+            padding: 20px;
+            color: var(--dark);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: var(--gradient);
+            border-radius: 15px;
+            color: white;
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+
+        .subtitle {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+
+        .dashboard {
+            display: grid;
+            grid-template-columns: 1fr 2fr;
+            gap: 25px;
+        }
+
+        .students-list {
+            background: white;
+            border-radius: 15px;
+            padding: 20px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            max-height: 600px;
+            overflow-y: auto;
+        }
+
+        .students-list h2 {
+            color: var(--primary);
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .student-card {
+            display: flex;
+            align-items: center;
+            padding: 15px;
+            margin-bottom: 15px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            background: var(--light);
+        }
+
+        .student-card:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 10px rgba(0, 0, 0, 0.1);
+        }
+
+        .student-card.active {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: var(--success);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-right: 15px;
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: white;
+        }
+
+        .student-info h3 {
+            margin-bottom: 5px;
+        }
+
+        .student-info p {
+            font-size: 0.9rem;
+            opacity: 0.8;
+        }
+
+        .feedback-section {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .feedback-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 25px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid var(--light);
+        }
+
+        .feedback-header h2 {
+            color: var(--primary);
+        }
+
+        .student-details {
+            display: flex;
+            align-items: center;
+        }
+
+        .student-details .student-avatar {
+            margin-right: 15px;
+        }
+
+        .feedback-form {
+            margin-top: 20px;
+        }
+
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: var(--secondary);
+        }
+
+        textarea {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e1e5ee;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 200px;
+            transition: border 0.3s ease;
+        }
+
+        textarea:focus {
+            outline: none;
+            border-color: var(--primary);
+        }
+
+        .rating {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        .rating i {
+            font-size: 1.5rem;
+            color: #ddd;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .rating i.active {
+            color: gold;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 15px;
+            margin-top: 25px;
+        }
+
+        button {
+            padding: 12px 25px;
+            border: none;
+            border-radius: 8px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .btn-primary {
+            background: var(--gradient);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(67, 97, 238, 0.4);
+        }
+
+        .btn-secondary {
+            background: #e9ecef;
+            color: var(--dark);
+        }
+
+        .btn-secondary:hover {
+            background: #dee2e6;
+        }
+
+        .notification {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background: var(--success);
+            color: white;
+            padding: 15px 25px;
+            border-radius: 10px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.5s ease;
+        }
+
+        .notification.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+
+        .notification i {
+            font-size: 1.2rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 40px 20px;
+            color: #6c757d;
+        }
+
+        .empty-state i {
+            font-size: 3rem;
+            margin-bottom: 15px;
+            color: #adb5bd;
+        }
+
+        @media (max-width: 768px) {
+            .dashboard {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Student Feedback Dashboard</h1>
+            <p class="subtitle">Provide personalized feedback to each student</p>
+        </header>
+
+        <div class="dashboard">
+            <div class="students-list">
+                <h2>Students</h2>
+                <div class="students-container">
+                    <!-- Students will be populated by JavaScript -->
+                </div>
+            </div>
+
+            <div class="feedback-section">
+                <div class="feedback-header">
+                    <h2>Student Feedback</h2>
+                    <div class="student-details">
+                        <div class="student-avatar">JD</div>
+                        <div>
+                            <h3>Select a student</h3>
+                            <p>Click on a student to provide feedback</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="empty-state">
+                    <i class="fas fa-user-graduate"></i>
+                    <h3>No Student Selected</h3>
+                    <p>Please select a student from the list to provide feedback</p>
+                </div>
+
+                <div class="feedback-form" style="display: none;">
+                    <div class="form-group">
+                        <label for="feedback">Your Feedback</label>
+                        <textarea id="feedback" placeholder="Write your personalized feedback for this student..."></textarea>
+                    </div>
+
+                    <div class="form-group">
+                        <label>Performance Rating</label>
+                        <div class="rating">
+                            <i class="fas fa-star" data-rating="1"></i>
+                            <i class="fas fa-star" data-rating="2"></i>
+                            <i class="fas fa-star" data-rating="3"></i>
+                            <i class="fas fa-star" data-rating="4"></i>
+                            <i class="fas fa-star" data-rating="5"></i>
+                        </div>
+                    </div>
+
+                    <div class="buttons">
+                        <button class="btn-primary" id="save-btn">
+                            <i class="fas fa-save"></i> Save Feedback
+                        </button>
+                        <button class="btn-secondary" id="clear-btn">
+                            <i class="fas fa-eraser"></i> Clear
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="notification" id="notification">
+        <i class="fas fa-bell"></i>
+        <span>Feedback saved! Student has been notified.</span>
+    </div>
+
+    <script>
+        // Sample student data
+        const students = [
+            { id: 1, name: "John Doe", email: "john.doe@example.com", course: "Mathematics", avatar: "JD" },
+            { id: 2, name: "Jane Smith", email: "jane.smith@example.com", course: "Science", avatar: "JS" },
+            { id: 3, name: "Michael Johnson", email: "michael.j@example.com", course: "History", avatar: "MJ" },
+            { id: 4, name: "Emily Davis", email: "emily.davis@example.com", course: "Literature", avatar: "ED" },
+            { id: 5, name: "Robert Wilson", email: "robert.w@example.com", course: "Computer Science", avatar: "RW" },
+            { id: 6, name: "Sarah Brown", email: "sarah.brown@example.com", course: "Mathematics", avatar: "SB" },
+            { id: 7, name: "David Miller", email: "david.m@example.com", course: "Physics", avatar: "DM" },
+            { id: 8, name: "Lisa Taylor", email: "lisa.t@example.com", course: "Chemistry", avatar: "LT" }
+        ];
+
+        // DOM Elements
+        const studentsContainer = document.querySelector('.students-container');
+        const studentDetails = document.querySelector('.student-details');
+        const emptyState = document.querySelector('.empty-state');
+        const feedbackForm = document.querySelector('.feedback-form');
+        const feedbackTextarea = document.getElementById('feedback');
+        const ratingStars = document.querySelectorAll('.rating i');
+        const saveBtn = document.getElementById('save-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const notification = document.getElementById('notification');
+
+        let selectedStudent = null;
+        let currentRating = 0;
+
+        // Initialize the student list
+        function initStudents() {
+            studentsContainer.innerHTML = '';
+            
+            students.forEach(student => {
+                const studentCard = document.createElement('div');
+                studentCard.className = 'student-card';
+                studentCard.innerHTML = `
+                    <div class="student-avatar">${student.avatar}</div>
+                    <div class="student-info">
+                        <h3>${student.name}</h3>
+                        <p>${student.course}</p>
+                    </div>
+                `;
+                
+                studentCard.addEventListener('click', () => selectStudent(student));
+                studentsContainer.appendChild(studentCard);
+            });
+        }
+
+        // Select a student
+        function selectStudent(student) {
+            selectedStudent = student;
+            
+            // Update active state in student list
+            document.querySelectorAll('.student-card').forEach(card => {
+                card.classList.remove('active');
+            });
+            event.currentTarget.classList.add('active');
+            
+            // Update student details
+            studentDetails.innerHTML = `
+                <div class="student-avatar">${student.avatar}</div>
+                <div>
+                    <h3>${student.name}</h3>
+                    <p>${student.course} • ${student.email}</p>
+                </div>
+            `;
+            
+            // Show feedback form and hide empty state
+            emptyState.style.display = 'none';
+            feedbackForm.style.display = 'block';
+            
+            // Load any existing feedback
+            loadExistingFeedback(student.id);
+        }
+
+        // Load existing feedback for a student
+        function loadExistingFeedback(studentId) {
+            const savedFeedback = localStorage.getItem(`feedback_${studentId}`);
+            if (savedFeedback) {
+                const feedbackData = JSON.parse(savedFeedback);
+                feedbackTextarea.value = feedbackData.text;
+                setRating(feedbackData.rating);
+            } else {
+                feedbackTextarea.value = '';
+                setRating(0);
+            }
+        }
+
+        // Set rating stars
+        function setRating(rating) {
+            currentRating = rating;
+            ratingStars.forEach(star => {
+                const starRating = parseInt(star.getAttribute('data-rating'));
+                if (starRating <= rating) {
+                    star.classList.add('active');
+                } else {
+                    star.classList.remove('active');
+                }
+            });
+        }
+
+        // Save feedback
+        function saveFeedback() {
+            if (!selectedStudent) {
+                alert('Please select a student first.');
+                return;
+            }
+            
+            const feedbackText = feedbackTextarea.value.trim();
+            if (!feedbackText) {
+                alert('Please write some feedback before saving.');
+                return;
+            }
+            
+            const feedbackData = {
+                text: feedbackText,
+                rating: currentRating,
+                date: new Date().toISOString()
+            };
+            
+            // Save to localStorage (in a real app, this would be sent to a server)
+            localStorage.setItem(`feedback_${selectedStudent.id}`, JSON.stringify(feedbackData));
+            
+            // Show notification
+            showNotification();
+        }
+
+        // Show notification
+        function showNotification() {
+            notification.classList.add('show');
+            setTimeout(() => {
+                notification.classList.remove('show');
+            }, 3000);
+        }
+
+        // Clear feedback form
+        function clearFeedback() {
+            feedbackTextarea.value = '';
+            setRating(0);
+        }
+
+        // Event Listeners
+        ratingStars.forEach(star => {
+            star.addEventListener('click', () => {
+                const rating = parseInt(star.getAttribute('data-rating'));
+                setRating(rating);
+            });
+        });
+
+        saveBtn.addEventListener('click', saveFeedback);
+        clearBtn.addEventListener('click', clearFeedback);
+
+        // Initialize the application
+        initStudents();
+    </script>
+</body>
+</html>
