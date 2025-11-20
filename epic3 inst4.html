@@ -1,0 +1,652 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Engagement Dashboard</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        :root {
+            --primary: #4361ee;
+            --secondary: #3f37c9;
+            --success: #4cc9f0;
+            --warning: #f72585;
+            --info: #7209b7;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --text: #333;
+            --bg: #f5f7fb;
+        }
+
+        body {
+            background-color: var(--bg);
+            color: var(--text);
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 20px 0;
+            margin-bottom: 30px;
+            border-bottom: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        .logo i {
+            font-size: 2rem;
+        }
+
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+
+        .user-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .dashboard-title {
+            margin-bottom: 30px;
+            text-align: center;
+        }
+
+        .dashboard-title h1 {
+            font-size: 2.5rem;
+            background: linear-gradient(135deg, var(--primary), var(--warning));
+            -webkit-background-clip: text;
+            background-clip: text;
+            color: transparent;
+            margin-bottom: 10px;
+        }
+
+        .dashboard-title p {
+            color: #666;
+            font-size: 1.1rem;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 30px;
+            gap: 15px;
+        }
+
+        .search-box {
+            flex: 1;
+            max-width: 400px;
+            position: relative;
+        }
+
+        .search-box input {
+            width: 100%;
+            padding: 12px 20px 12px 45px;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            font-size: 1rem;
+            background-color: white;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #999;
+        }
+
+        .filter-options {
+            display: flex;
+            gap: 15px;
+        }
+
+        .filter-options select {
+            padding: 12px 20px;
+            border-radius: 50px;
+            border: 1px solid #ddd;
+            background-color: white;
+            font-size: 1rem;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+            cursor: pointer;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .stat-card.lessons {
+            border-top: 5px solid var(--primary);
+        }
+
+        .stat-card.quizzes {
+            border-top: 5px solid var(--success);
+        }
+
+        .stat-card.login {
+            border-top: 5px solid var(--warning);
+        }
+
+        .stat-card.questions {
+            border-top: 5px solid var(--info);
+        }
+
+        .stat-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .stat-icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.8rem;
+            color: white;
+        }
+
+        .lessons .stat-icon {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        .quizzes .stat-icon {
+            background: linear-gradient(135deg, var(--success), #3a86ff);
+        }
+
+        .login .stat-icon {
+            background: linear-gradient(135deg, var(--warning), #b5179e);
+        }
+
+        .questions .stat-icon {
+            background: linear-gradient(135deg, var(--info), #560bad);
+        }
+
+        .stat-value {
+            font-size: 2.5rem;
+            font-weight: 700;
+            margin: 10px 0;
+        }
+
+        .stat-label {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        .stat-change {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            margin-top: 10px;
+            font-size: 0.9rem;
+        }
+
+        .positive {
+            color: #2ecc71;
+        }
+
+        .negative {
+            color: #e74c3c;
+        }
+
+        .charts-container {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 25px;
+            margin-bottom: 40px;
+        }
+
+        .chart-card {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .chart-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .chart-actions {
+            display: flex;
+            gap: 10px;
+        }
+
+        .chart-actions button {
+            background: none;
+            border: none;
+            color: #999;
+            cursor: pointer;
+            font-size: 1rem;
+            transition: color 0.3s;
+        }
+
+        .chart-actions button:hover {
+            color: var(--primary);
+        }
+
+        .chart-placeholder {
+            height: 300px;
+            background: linear-gradient(135deg, #f5f7fb, #e8ecf1);
+            border-radius: 10px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: #999;
+            font-size: 1.1rem;
+        }
+
+        .students-list {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        .students-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 20px;
+        }
+
+        .students-title {
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .view-all {
+            color: var(--primary);
+            text-decoration: none;
+            font-weight: 500;
+        }
+
+        .student-item {
+            display: flex;
+            align-items: center;
+            padding: 15px 0;
+            border-bottom: 1px solid #eee;
+        }
+
+        .student-item:last-child {
+            border-bottom: none;
+        }
+
+        .student-avatar {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            margin-right: 15px;
+        }
+
+        .student-info {
+            flex: 1;
+        }
+
+        .student-name {
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .student-details {
+            display: flex;
+            gap: 15px;
+            font-size: 0.9rem;
+            color: #666;
+        }
+
+        .student-details span {
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .student-progress {
+            width: 120px;
+            height: 8px;
+            background-color: #eee;
+            border-radius: 4px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            border-radius: 4px;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px 0;
+            margin-top: 40px;
+            color: #666;
+            border-top: 1px solid rgba(0, 0, 0, 0.1);
+        }
+
+        @media (max-width: 768px) {
+            .charts-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .controls {
+                flex-direction: column;
+            }
+            
+            .search-box {
+                max-width: 100%;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <div class="logo">
+                <i class="fas fa-graduation-cap"></i>
+                <span>EduTrack</span>
+            </div>
+            <div class="user-info">
+                <div class="user-avatar">JD</div>
+                <div>
+                    <div class="user-name">John Doe</div>
+                    <div class="user-role">Instructor</div>
+                </div>
+            </div>
+        </header>
+
+        <div class="dashboard-title">
+            <h1>Student Engagement Dashboard</h1>
+            <p>Track student progress, quiz results, and engagement metrics</p>
+        </div>
+
+        <div class="controls">
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search students...">
+            </div>
+            <div class="filter-options">
+                <select>
+                    <option>All Courses</option>
+                    <option>Web Development</option>
+                    <option>Data Science</option>
+                    <option>Digital Marketing</option>
+                </select>
+                <select>
+                    <option>Last 30 Days</option>
+                    <option>Last 7 Days</option>
+                    <option>Last 24 Hours</option>
+                    <option>All Time</option>
+                </select>
+            </div>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card lessons">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Lessons Completed</div>
+                        <div class="stat-value">342</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-play-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>12% increase from last month</span>
+                </div>
+            </div>
+
+            <div class="stat-card quizzes">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Average Quiz Score</div>
+                        <div class="stat-value">84%</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-check-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>5% improvement</span>
+                </div>
+            </div>
+
+            <div class="stat-card login">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Last Login</div>
+                        <div class="stat-value">2h ago</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-user-clock"></i>
+                    </div>
+                </div>
+                <div class="stat-change negative">
+                    <i class="fas fa-arrow-down"></i>
+                    <span>3% decrease in activity</span>
+                </div>
+            </div>
+
+            <div class="stat-card questions">
+                <div class="stat-header">
+                    <div>
+                        <div class="stat-label">Questions Asked</div>
+                        <div class="stat-value">127</div>
+                    </div>
+                    <div class="stat-icon">
+                        <i class="fas fa-question-circle"></i>
+                    </div>
+                </div>
+                <div class="stat-change positive">
+                    <i class="fas fa-arrow-up"></i>
+                    <span>8% more engagement</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="charts-container">
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Student Progress Overview</div>
+                    <div class="chart-actions">
+                        <button><i class="fas fa-download"></i></button>
+                        <button><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-line"></i>
+                    <span> Progress Chart Visualization</span>
+                </div>
+            </div>
+
+            <div class="chart-card">
+                <div class="chart-header">
+                    <div class="chart-title">Quiz Performance</div>
+                    <div class="chart-actions">
+                        <button><i class="fas fa-download"></i></button>
+                        <button><i class="fas fa-expand"></i></button>
+                    </div>
+                </div>
+                <div class="chart-placeholder">
+                    <i class="fas fa-chart-pie"></i>
+                    <span> Quiz Results Chart</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="students-list">
+            <div class="students-header">
+                <div class="students-title">Recent Student Activity</div>
+                <a href="#" class="view-all">View All</a>
+            </div>
+
+            <div class="student-item">
+                <div class="student-avatar">AS</div>
+                <div class="student-info">
+                    <div class="student-name">Alex Smith</div>
+                    <div class="student-details">
+                        <span><i class="far fa-play-circle"></i> 12 lessons</span>
+                        <span><i class="far fa-check-circle"></i> 85% avg</span>
+                        <span><i class="far fa-clock"></i> 2h ago</span>
+                    </div>
+                </div>
+                <div class="student-progress">
+                    <div class="progress-bar" style="width: 85%"></div>
+                </div>
+            </div>
+
+            <div class="student-item">
+                <div class="student-avatar">MJ</div>
+                <div class="student-info">
+                    <div class="student-name">Maria Johnson</div>
+                    <div class="student-details">
+                        <span><i class="far fa-play-circle"></i> 8 lessons</span>
+                        <span><i class="far fa-check-circle"></i> 92% avg</span>
+                        <span><i class="far fa-clock"></i> 5h ago</span>
+                    </div>
+                </div>
+                <div class="student-progress">
+                    <div class="progress-bar" style="width: 65%"></div>
+                </div>
+            </div>
+
+            <div class="student-item">
+                <div class="student-avatar">RW</div>
+                <div class="student-info">
+                    <div class="student-name">Robert Williams</div>
+                    <div class="student-details">
+                        <span><i class="far fa-play-circle"></i> 15 lessons</span>
+                        <span><i class="far fa-check-circle"></i> 78% avg</span>
+                        <span><i class="far fa-clock"></i> 1d ago</span>
+                    </div>
+                </div>
+                <div class="student-progress">
+                    <div class="progress-bar" style="width: 90%"></div>
+                </div>
+            </div>
+
+            <div class="student-item">
+                <div class="student-avatar">ED</div>
+                <div class="student-info">
+                    <div class="student-name">Emily Davis</div>
+                    <div class="student-details">
+                        <span><i class="far fa-play-circle"></i> 10 lessons</span>
+                        <span><i class="far fa-check-circle"></i> 88% avg</span>
+                        <span><i class="far fa-clock"></i> 3h ago</span>
+                    </div>
+                </div>
+                <div class="student-progress">
+                    <div class="progress-bar" style="width: 75%"></div>
+                </div>
+            </div>
+        </div>
+
+        <footer>
+            <p>EduTrack Dashboard &copy; 2023 | Student Engagement Analytics</p>
+        </footer>
+    </div>
+
+    <script>
+        // Simple animation for stat cards on page load
+        document.addEventListener('DOMContentLoaded', function() {
+            const statCards = document.querySelectorAll('.stat-card');
+            
+            statCards.forEach((card, index) => {
+                setTimeout(() => {
+                    card.style.opacity = '0';
+                    card.style.transform = 'translateY(20px)';
+                    card.style.transition = 'opacity 0.5s ease, transform 0.5s ease';
+                    
+                    setTimeout(() => {
+                        card.style.opacity = '1';
+                        card.style.transform = 'translateY(0)';
+                    }, 100);
+                }, index * 100);
+            });
+            
+            // Update last login time dynamically
+            function updateLastLogin() {
+                const loginTimeElement = document.querySelector('.login .stat-value');
+                const times = ['2h ago', '1h ago', '30m ago', 'Just now'];
+                let currentIndex = 0;
+                
+                setInterval(() => {
+                    loginTimeElement.textContent = times[currentIndex];
+                    currentIndex = (currentIndex + 1) % times.length;
+                }, 5000);
+            }
+            
+            updateLastLogin();
+        });
+    </script>
+</body>
+</html>
