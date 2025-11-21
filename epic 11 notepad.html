@@ -1,0 +1,388 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Student Notepad</title>
+    <style>
+        :root {
+            --primary-color: #4e54c8;
+            --secondary-color: #8f94fb;
+            --accent-color: #ff7e5f;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --danger-color: #dc3545;
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background: linear-gradient(135deg, var(--primary-color), var(--secondary-color));
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+        
+        .notepad-container {
+            width: 90%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 15px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            overflow: hidden;
+            animation: fadeIn 0.5s ease-out;
+        }
+        
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        
+        .notepad-header {
+            background: linear-gradient(to right, var(--primary-color), var(--secondary-color));
+            color: white;
+            padding: 15px 20px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .notepad-title {
+            font-size: 1.5rem;
+            font-weight: 600;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            font-size: 0.9rem;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            margin-right: 8px;
+            background-color: var(--success-color);
+            animation: pulse 2s infinite;
+        }
+        
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.5; }
+            100% { opacity: 1; }
+        }
+        
+        .notepad-body {
+            padding: 20px;
+        }
+        
+        .note-area {
+            width: 100%;
+            height: 400px;
+            border: 2px solid #e9ecef;
+            border-radius: 10px;
+            padding: 15px;
+            font-size: 1rem;
+            line-height: 1.5;
+            resize: none;
+            transition: border-color 0.3s;
+            background-color: #f8f9fa;
+        }
+        
+        .note-area:focus {
+            outline: none;
+            border-color: var(--primary-color);
+            box-shadow: 0 0 0 3px rgba(78, 84, 200, 0.2);
+        }
+        
+        .notepad-footer {
+            padding: 15px 20px;
+            background-color: #f8f9fa;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-top: 1px solid #e9ecef;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 5px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #3d42a5;
+            transform: translateY(-2px);
+        }
+        
+        .btn-secondary {
+            background-color: var(--accent-color);
+            color: white;
+        }
+        
+        .btn-secondary:hover {
+            background-color: #e86a4a;
+            transform: translateY(-2px);
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--dark-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: var(--dark-color);
+            color: white;
+        }
+        
+        .word-count {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .toast {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            padding: 12px 20px;
+            background-color: var(--success-color);
+            color: white;
+            border-radius: 5px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            transform: translateY(100px);
+            opacity: 0;
+            transition: all 0.3s;
+        }
+        
+        .toast.show {
+            transform: translateY(0);
+            opacity: 1;
+        }
+        
+        .toast-icon {
+            font-size: 1.2rem;
+        }
+        
+        @media (max-width: 600px) {
+            .notepad-footer {
+                flex-direction: column;
+                gap: 15px;
+            }
+            
+            .action-buttons {
+                width: 100%;
+                justify-content: space-between;
+            }
+            
+            .btn {
+                flex: 1;
+                justify-content: center;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="notepad-container">
+        <div class="notepad-header">
+            <div class="notepad-title">My Personal Notes</div>
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span id="status-text">Auto-save enabled</span>
+            </div>
+        </div>
+        
+        <div class="notepad-body">
+            <textarea class="note-area" id="note-area" placeholder="Start typing your notes here..."></textarea>
+        </div>
+        
+        <div class="notepad-footer">
+            <div class="action-buttons">
+                <button class="btn btn-primary" id="save-btn">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M2 1a1 1 0 0 0-1 1v12a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V2a1 1 0 0 0-1-1H9.5a1 1 0 0 0-1 1v7.293l2.646-2.647a.5.5 0 0 1 .708.708l-3.5 3.5a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L7.5 9.293V2a2 2 0 0 1 2-2H14a2 2 0 0 1 2 2v12a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V2a2 2 0 0 1 2-2h2.5a.5.5 0 0 1 0 1H2z"/>
+                    </svg>
+                    Save Now
+                </button>
+                <button class="btn btn-secondary" id="export-btn">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M.5 9.9a.5.5 0 0 1 .5.5v2.5a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1v-2.5a.5.5 0 0 1 1 0v2.5a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2v-2.5a.5.5 0 0 1 .5-.5z"/>
+                        <path d="M7.646 11.854a.5.5 0 0 0 .708 0l3-3a.5.5 0 0 0-.708-.708L8.5 10.293V1.5a.5.5 0 0 0-1 0v8.793L5.354 8.146a.5.5 0 1 0-.708.708l3 3z"/>
+                    </svg>
+                    Export Notes
+                </button>
+                <button class="btn btn-outline" id="clear-btn">
+                    <svg width="16" height="16" viewBox="0 0 16 16" fill="currentColor">
+                        <path d="M5.5 5.5A.5.5 0 0 1 6 6v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm2.5 0a.5.5 0 0 1 .5.5v6a.5.5 0 0 1-1 0V6a.5.5 0 0 1 .5-.5zm3 .5a.5.5 0 0 0-1 0v6a.5.5 0 0 0 1 0V6z"/>
+                        <path fill-rule="evenodd" d="M14.5 3a1 1 0 0 1-1 1H13v9a2 2 0 0 1-2 2H5a2 2 0 0 1-2-2V4h-.5a1 1 0 0 1-1-1V2a1 1 0 0 1 1-1H6a1 1 0 0 1 1-1h2a1 1 0 0 1 1 1h3.5a1 1 0 0 1 1 1v1zM4.118 4 4 4.059V13a1 1 0 0 0 1 1h6a1 1 0 0 0 1-1V4.059L11.882 4H4.118zM2.5 3V2h11v1h-11z"/>
+                    </svg>
+                    Clear
+                </button>
+            </div>
+            <div class="word-count">
+                Words: <span id="word-count">0</span>
+            </div>
+        </div>
+    </div>
+    
+    <div class="toast" id="toast">
+        <div class="toast-icon">✓</div>
+        <div class="toast-message">Notes saved successfully!</div>
+    </div>
+
+    <script>
+        // DOM Elements
+        const noteArea = document.getElementById('note-area');
+        const saveBtn = document.getElementById('save-btn');
+        const exportBtn = document.getElementById('export-btn');
+        const clearBtn = document.getElementById('clear-btn');
+        const wordCount = document.getElementById('word-count');
+        const statusText = document.getElementById('status-text');
+        const toast = document.getElementById('toast');
+        
+        // Auto-save timer
+        let autoSaveTimer;
+        const AUTO_SAVE_DELAY = 2000; // 2 seconds
+        
+        // Load saved notes from localStorage
+        function loadSavedNotes() {
+            const savedNotes = localStorage.getItem('studentNotes');
+            if (savedNotes) {
+                noteArea.value = savedNotes;
+                updateWordCount();
+            }
+        }
+        
+        // Save notes to localStorage
+        function saveNotes() {
+            const notes = noteArea.value;
+            localStorage.setItem('studentNotes', notes);
+            showToast('Notes saved successfully!');
+            updateWordCount();
+        }
+        
+        // Export notes as a text file
+        function exportNotes() {
+            const notes = noteArea.value;
+            if (!notes.trim()) {
+                showToast('No notes to export!', 'warning');
+                return;
+            }
+            
+            const blob = new Blob([notes], { type: 'text/plain' });
+            const url = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = 'my-notes.txt';
+            document.body.appendChild(a);
+            a.click();
+            document.body.removeChild(a);
+            URL.revokeObjectURL(url);
+            
+            showToast('Notes exported successfully!');
+        }
+        
+        // Clear notes
+        function clearNotes() {
+            if (noteArea.value.trim() && confirm('Are you sure you want to clear all notes?')) {
+                noteArea.value = '';
+                localStorage.removeItem('studentNotes');
+                updateWordCount();
+                showToast('Notes cleared!');
+            }
+        }
+        
+        // Update word count
+        function updateWordCount() {
+            const text = noteArea.value.trim();
+            const count = text ? text.split(/\s+/).length : 0;
+            wordCount.textContent = count;
+        }
+        
+        // Show toast notification
+        function showToast(message, type = 'success') {
+            const toastMessage = toast.querySelector('.toast-message');
+            const toastIcon = toast.querySelector('.toast-icon');
+            
+            toastMessage.textContent = message;
+            
+            // Set color based on type
+            if (type === 'success') {
+                toast.style.backgroundColor = 'var(--success-color)';
+                toastIcon.textContent = '✓';
+            } else if (type === 'warning') {
+                toast.style.backgroundColor = 'var(--warning-color)';
+                toastIcon.textContent = '!';
+            } else if (type === 'error') {
+                toast.style.backgroundColor = 'var(--danger-color)';
+                toastIcon.textContent = '✕';
+            }
+            
+            toast.classList.add('show');
+            
+            setTimeout(() => {
+                toast.classList.remove('show');
+            }, 3000);
+        }
+        
+        // Auto-save functionality
+        function setupAutoSave() {
+            noteArea.addEventListener('input', () => {
+                // Clear existing timer
+                clearTimeout(autoSaveTimer);
+                
+                // Update status
+                statusText.textContent = 'Saving...';
+                
+                // Set new timer
+                autoSaveTimer = setTimeout(() => {
+                    saveNotes();
+                    statusText.textContent = 'Auto-save enabled';
+                }, AUTO_SAVE_DELAY);
+                
+                updateWordCount();
+            });
+        }
+        
+        // Event Listeners
+        saveBtn.addEventListener('click', saveNotes);
+        exportBtn.addEventListener('click', exportNotes);
+        clearBtn.addEventListener('click', clearNotes);
+        
+        // Initialize
+        document.addEventListener('DOMContentLoaded', () => {
+            loadSavedNotes();
+            setupAutoSave();
+        });
+    </script>
+</body>
+</html>
