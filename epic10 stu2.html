@@ -1,0 +1,411 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Review - Share Your Feedback</title>
+    <style>
+        :root {
+            --primary: #4361ee;
+            --secondary: #3a0ca3;
+            --accent: #f72585;
+            --light: #f8f9fa;
+            --dark: #212529;
+            --success: #4cc9f0;
+            --warning: #f8961e;
+            --star-color: #ffc107;
+            --shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            --transition: all 0.3s ease;
+        }
+
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+        }
+
+        .container {
+            width: 100%;
+            max-width: 800px;
+            background-color: white;
+            border-radius: 20px;
+            box-shadow: var(--shadow);
+            overflow: hidden;
+            animation: fadeIn 0.8s ease;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .header {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            padding: 30px;
+            text-align: center;
+            position: relative;
+        }
+
+        .header h1 {
+            font-size: 2.2rem;
+            margin-bottom: 10px;
+        }
+
+        .header p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .progress-container {
+            margin-top: 20px;
+            background-color: rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            height: 10px;
+            overflow: hidden;
+        }
+
+        .progress-bar {
+            height: 100%;
+            width: 80%;
+            background-color: var(--success);
+            border-radius: 10px;
+            transition: width 1s ease;
+        }
+
+        .content {
+            padding: 30px;
+        }
+
+        .course-info {
+            display: flex;
+            align-items: center;
+            margin-bottom: 30px;
+            background-color: var(--light);
+            padding: 20px;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .course-icon {
+            width: 80px;
+            height: 80px;
+            background: linear-gradient(135deg, var(--accent), var(--warning));
+            border-radius: 15px;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            margin-right: 20px;
+            color: white;
+            font-size: 2rem;
+        }
+
+        .course-details h2 {
+            color: var(--dark);
+            margin-bottom: 5px;
+        }
+
+        .course-details p {
+            color: #6c757d;
+        }
+
+        .review-form {
+            background-color: var(--light);
+            padding: 25px;
+            border-radius: 15px;
+            box-shadow: 0 2px 8px rgba(0, 0, 0, 0.05);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 10px;
+            font-weight: 600;
+            color: var(--dark);
+        }
+
+        .rating-container {
+            display: flex;
+            justify-content: center;
+            margin: 20px 0;
+        }
+
+        .star {
+            font-size: 2.5rem;
+            color: #e0e0e0;
+            cursor: pointer;
+            transition: var(--transition);
+            margin: 0 5px;
+        }
+
+        .star:hover {
+            transform: scale(1.2);
+        }
+
+        .star.active {
+            color: var(--star-color);
+        }
+
+        .feedback-input {
+            width: 100%;
+            padding: 15px;
+            border: 2px solid #e0e0e0;
+            border-radius: 10px;
+            font-size: 1rem;
+            resize: vertical;
+            min-height: 120px;
+            transition: var(--transition);
+        }
+
+        .feedback-input:focus {
+            outline: none;
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(67, 97, 238, 0.2);
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            font-size: 1.1rem;
+            font-weight: 600;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+            width: 100%;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 15px rgba(67, 97, 238, 0.3);
+        }
+
+        .submit-btn:active {
+            transform: translateY(0);
+        }
+
+        .submit-btn i {
+            margin-right: 10px;
+        }
+
+        .confirmation {
+            text-align: center;
+            padding: 30px;
+            display: none;
+        }
+
+        .confirmation i {
+            font-size: 4rem;
+            color: var(--success);
+            margin-bottom: 20px;
+        }
+
+        .confirmation h2 {
+            color: var(--dark);
+            margin-bottom: 10px;
+        }
+
+        .confirmation p {
+            color: #6c757d;
+            margin-bottom: 20px;
+        }
+
+        .confirmation button {
+            background-color: var(--light);
+            color: var(--dark);
+            border: 2px solid #e0e0e0;
+            padding: 10px 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: var(--transition);
+        }
+
+        .confirmation button:hover {
+            background-color: #e9ecef;
+        }
+
+        @media (max-width: 600px) {
+            .header {
+                padding: 20px;
+            }
+            
+            .header h1 {
+                font-size: 1.8rem;
+            }
+            
+            .content {
+                padding: 20px;
+            }
+            
+            .course-info {
+                flex-direction: column;
+                text-align: center;
+            }
+            
+            .course-icon {
+                margin-right: 0;
+                margin-bottom: 15px;
+            }
+            
+            .star {
+                font-size: 2rem;
+            }
+        }
+    </style>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>Share Your Experience</h1>
+            <p>You've completed 80% of the course! Help us improve by leaving a review.</p>
+            <div class="progress-container">
+                <div class="progress-bar"></div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="course-info">
+                <div class="course-icon">
+                    <i class="fas fa-laptop-code"></i>
+                </div>
+                <div class="course-details">
+                    <h2>Web Development Masterclass</h2>
+                    <p>HTML, CSS, JavaScript, React, Node.js and more</p>
+                </div>
+            </div>
+            
+            <div class="review-form" id="reviewForm">
+                <div class="form-group">
+                    <label for="rating">How would you rate this course?</label>
+                    <div class="rating-container">
+                        <span class="star" data-value="1"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="2"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="3"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="4"><i class="far fa-star"></i></span>
+                        <span class="star" data-value="5"><i class="far fa-star"></i></span>
+                    </div>
+                    <input type="hidden" id="rating" value="0">
+                </div>
+                
+                <div class="form-group">
+                    <label for="feedback">Share your feedback (optional)</label>
+                    <textarea class="feedback-input" id="feedback" placeholder="What did you like about the course? What could be improved?"></textarea>
+                </div>
+                
+                <button class="submit-btn" id="submitReview">
+                    <i class="fas fa-paper-plane"></i> Submit Review
+                </button>
+            </div>
+            
+            <div class="confirmation" id="confirmation">
+                <i class="fas fa-check-circle"></i>
+                <h2>Thank You for Your Feedback!</h2>
+                <p>Your review has been submitted and will be visible on the course page.</p>
+                <button id="closeBtn">Close</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Star rating functionality
+        const stars = document.querySelectorAll('.star');
+        const ratingInput = document.getElementById('rating');
+        
+        stars.forEach(star => {
+            star.addEventListener('click', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                ratingInput.value = value;
+                
+                // Update star display
+                stars.forEach((s, index) => {
+                    if (index < value) {
+                        s.innerHTML = '<i class="fas fa-star"></i>';
+                        s.classList.add('active');
+                    } else {
+                        s.innerHTML = '<i class="far fa-star"></i>';
+                        s.classList.remove('active');
+                    }
+                });
+            });
+            
+            // Hover effect
+            star.addEventListener('mouseover', function() {
+                const value = parseInt(this.getAttribute('data-value'));
+                
+                stars.forEach((s, index) => {
+                    if (index < value) {
+                        s.innerHTML = '<i class="fas fa-star"></i>';
+                    } else {
+                        s.innerHTML = '<i class="far fa-star"></i>';
+                    }
+                });
+            });
+            
+            // Reset on mouseout if no rating selected
+            star.addEventListener('mouseout', function() {
+                const currentRating = parseInt(ratingInput.value);
+                
+                if (currentRating === 0) {
+                    stars.forEach(s => {
+                        s.innerHTML = '<i class="far fa-star"></i>';
+                        s.classList.remove('active');
+                    });
+                } else {
+                    stars.forEach((s, index) => {
+                        if (index < currentRating) {
+                            s.innerHTML = '<i class="fas fa-star"></i>';
+                            s.classList.add('active');
+                        } else {
+                            s.innerHTML = '<i class="far fa-star"></i>';
+                            s.classList.remove('active');
+                        }
+                    });
+                }
+            });
+        });
+        
+        // Form submission
+        const submitBtn = document.getElementById('submitReview');
+        const reviewForm = document.getElementById('reviewForm');
+        const confirmation = document.getElementById('confirmation');
+        const closeBtn = document.getElementById('closeBtn');
+        
+        submitBtn.addEventListener('click', function() {
+            const rating = parseInt(ratingInput.value);
+            
+            if (rating === 0) {
+                alert('Please select a rating before submitting.');
+                return;
+            }
+            
+            // In a real application, you would send the data to a server here
+            // For this demo, we'll just show the confirmation
+            reviewForm.style.display = 'none';
+            confirmation.style.display = 'block';
+        });
+        
+        closeBtn.addEventListener('click', function() {
+            // In a real application, this would redirect or close the modal
+            alert('In a real application, this would close the review prompt.');
+        });
+    </script>
+</body>
+</html>
