@@ -1,0 +1,504 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Certificate Generator</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            color: #333;
+            line-height: 1.6;
+            padding: 20px;
+            min-height: 100vh;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+        }
+
+        header {
+            text-align: center;
+            margin-bottom: 30px;
+            padding: 20px;
+            background: rgba(255, 255, 255, 0.8);
+            border-radius: 15px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-size: 2.5rem;
+        }
+
+        .subtitle {
+            color: #7f8c8d;
+            font-size: 1.2rem;
+        }
+
+        .main-content {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 30px;
+            margin-bottom: 30px;
+        }
+
+        .preview-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .controls-section {
+            flex: 1;
+            min-width: 300px;
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .section-title {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #ecf0f1;
+            font-size: 1.5rem;
+        }
+
+        .certificate-preview {
+            background: #f9f9f9;
+            border: 2px dashed #bdc3c7;
+            border-radius: 10px;
+            height: 400px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            margin-bottom: 20px;
+            overflow: hidden;
+            position: relative;
+        }
+
+        .certificate {
+            width: 100%;
+            height: 100%;
+            background: #fff;
+            position: relative;
+            padding: 30px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            border: 15px solid #f1c40f;
+            box-shadow: inset 0 0 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .certificate-title {
+            font-size: 2.5rem;
+            color: #2c3e50;
+            margin-bottom: 10px;
+            font-family: 'Times New Roman', serif;
+            font-weight: bold;
+        }
+
+        .certificate-subtitle {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .certificate-student {
+            font-size: 2rem;
+            color: #e74c3c;
+            margin: 20px 0;
+            font-family: 'Brush Script MT', cursive;
+        }
+
+        .certificate-course {
+            font-size: 1.5rem;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        .certificate-date {
+            font-size: 1.2rem;
+            color: #7f8c8d;
+            margin-bottom: 30px;
+        }
+
+        .certificate-signatures {
+            display: flex;
+            justify-content: space-between;
+            width: 100%;
+            margin-top: 40px;
+        }
+
+        .signature {
+            text-align: center;
+            flex: 1;
+        }
+
+        .signature-line {
+            width: 200px;
+            height: 1px;
+            background: #2c3e50;
+            margin: 0 auto 10px;
+        }
+
+        .logo {
+            position: absolute;
+            top: 20px;
+            left: 20px;
+            width: 80px;
+            height: 80px;
+            background: #3498db;
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: bold;
+        }
+
+        .control-group {
+            margin-bottom: 20px;
+        }
+
+        .control-label {
+            display: block;
+            margin-bottom: 8px;
+            font-weight: 600;
+            color: #2c3e50;
+        }
+
+        .form-control {
+            width: 100%;
+            padding: 12px;
+            border: 1px solid #ddd;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border 0.3s;
+        }
+
+        .form-control:focus {
+            border-color: #3498db;
+            outline: none;
+        }
+
+        .color-picker {
+            display: flex;
+            gap: 10px;
+        }
+
+        .color-option {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: transform 0.3s;
+        }
+
+        .color-option:hover {
+            transform: scale(1.1);
+        }
+
+        .color-option.active {
+            border-color: #2c3e50;
+        }
+
+        .btn {
+            display: inline-block;
+            padding: 12px 25px;
+            background: #3498db;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: background 0.3s;
+            margin-right: 10px;
+            margin-bottom: 10px;
+        }
+
+        .btn:hover {
+            background: #2980b9;
+        }
+
+        .btn-success {
+            background: #2ecc71;
+        }
+
+        .btn-success:hover {
+            background: #27ae60;
+        }
+
+        .btn-danger {
+            background: #e74c3c;
+        }
+
+        .btn-danger:hover {
+            background: #c0392b;
+        }
+
+        .file-upload {
+            position: relative;
+            overflow: hidden;
+            display: inline-block;
+        }
+
+        .file-upload input[type="file"] {
+            position: absolute;
+            left: 0;
+            top: 0;
+            opacity: 0;
+            width: 100%;
+            height: 100%;
+            cursor: pointer;
+        }
+
+        .actions {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 30px;
+            flex-wrap: wrap;
+        }
+
+        footer {
+            text-align: center;
+            padding: 20px;
+            color: #7f8c8d;
+            font-size: 0.9rem;
+        }
+
+        @media (max-width: 768px) {
+            .main-content {
+                flex-direction: column;
+            }
+            
+            .certificate-preview {
+                height: 300px;
+            }
+            
+            .certificate-title {
+                font-size: 1.8rem;
+            }
+            
+            .certificate-student {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <header>
+            <h1>Certificate Generator</h1>
+            <p class="subtitle">Create beautiful certificates for your students with our easy-to-use tool</p>
+        </header>
+
+        <div class="main-content">
+            <section class="preview-section">
+                <h2 class="section-title">Certificate Preview</h2>
+                <div class="certificate-preview">
+                    <div class="certificate" id="certificate">
+                        <div class="logo" id="logo-preview">LC</div>
+                        <h2 class="certificate-title" id="title-preview">Certificate of Completion</h2>
+                        <p class="certificate-subtitle" id="subtitle-preview">This certificate is proudly presented to</p>
+                        <h3 class="certificate-student" id="student-preview">John Doe</h3>
+                        <p class="certificate-course" id="course-preview">for successfully completing the Advanced Web Development Course</p>
+                        <p class="certificate-date" id="date-preview">on June 15, 2023</p>
+                        <div class="certificate-signatures">
+                            <div class="signature">
+                                <div class="signature-line"></div>
+                                <p>Instructor Name</p>
+                            </div>
+                            <div class="signature">
+                                <div class="signature-line"></div>
+                                <p>Director Name</p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <div class="actions">
+                    <button class="btn btn-success"><i class="fas fa-download"></i> Download Certificate</button>
+                    <button class="btn"><i class="fas fa-print"></i> Print Certificate</button>
+                </div>
+            </section>
+
+            <section class="controls-section">
+                <h2 class="section-title">Customize Your Certificate</h2>
+                
+                <div class="control-group">
+                    <label class="control-label">Student Name</label>
+                    <input type="text" class="form-control" id="student-name" value="John Doe" placeholder="Enter student name">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Course Name</label>
+                    <input type="text" class="form-control" id="course-name" value="Advanced Web Development Course" placeholder="Enter course name">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Completion Date</label>
+                    <input type="date" class="form-control" id="completion-date" value="2023-06-15">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Certificate Title</label>
+                    <input type="text" class="form-control" id="certificate-title" value="Certificate of Completion" placeholder="Enter certificate title">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Certificate Subtitle</label>
+                    <input type="text" class="form-control" id="certificate-subtitle" value="This certificate is proudly presented to" placeholder="Enter certificate subtitle">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Border Color</label>
+                    <div class="color-picker">
+                        <div class="color-option active" style="background-color: #f1c40f;" data-color="#f1c40f"></div>
+                        <div class="color-option" style="background-color: #3498db;" data-color="#3498db"></div>
+                        <div class="color-option" style="background-color: #2ecc71;" data-color="#2ecc71"></div>
+                        <div class="color-option" style="background-color: #9b59b6;" data-color="#9b59b6"></div>
+                        <div class="color-option" style="background-color: #e74c3c;" data-color="#e74c3c"></div>
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Upload Logo</label>
+                    <div class="file-upload btn">
+                        <i class="fas fa-upload"></i> Choose Logo
+                        <input type="file" id="logo-upload" accept="image/*">
+                    </div>
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Instructor Signature</label>
+                    <input type="text" class="form-control" id="instructor-signature" value="Instructor Name" placeholder="Enter instructor name">
+                </div>
+                
+                <div class="control-group">
+                    <label class="control-label">Director Signature</label>
+                    <input type="text" class="form-control" id="director-signature" value="Director Name" placeholder="Enter director name">
+                </div>
+                
+                <div class="actions">
+                    <button class="btn"><i class="fas fa-save"></i> Save Template</button>
+                    <button class="btn btn-danger"><i class="fas fa-redo"></i> Reset to Default</button>
+                </div>
+            </section>
+        </div>
+
+        <footer>
+            <p>Certificate Generator &copy; 2023 | Designed for Instructors</p>
+        </footer>
+    </div>
+
+    <script>
+        // Get DOM elements
+        const studentNameInput = document.getElementById('student-name');
+        const courseNameInput = document.getElementById('course-name');
+        const completionDateInput = document.getElementById('completion-date');
+        const certificateTitleInput = document.getElementById('certificate-title');
+        const certificateSubtitleInput = document.getElementById('certificate-subtitle');
+        const instructorSignatureInput = document.getElementById('instructor-signature');
+        const directorSignatureInput = document.getElementById('director-signature');
+        const logoUploadInput = document.getElementById('logo-upload');
+        
+        // Preview elements
+        const studentPreview = document.getElementById('student-preview');
+        const coursePreview = document.getElementById('course-preview');
+        const datePreview = document.getElementById('date-preview');
+        const titlePreview = document.getElementById('title-preview');
+        const subtitlePreview = document.getElementById('subtitle-preview');
+        const certificate = document.getElementById('certificate');
+        const logoPreview = document.getElementById('logo-preview');
+        const signatureElements = document.querySelectorAll('.signature p');
+        
+        // Color options
+        const colorOptions = document.querySelectorAll('.color-option');
+        
+        // Format date for display
+        function formatDate(dateString) {
+            const options = { year: 'numeric', month: 'long', day: 'numeric' };
+            return new Date(dateString).toLocaleDateString('en-US', options);
+        }
+        
+        // Update preview when inputs change
+        studentNameInput.addEventListener('input', function() {
+            studentPreview.textContent = this.value || 'Student Name';
+        });
+        
+        courseNameInput.addEventListener('input', function() {
+            coursePreview.textContent = `for successfully completing the ${this.value || 'Course Name'}`;
+        });
+        
+        completionDateInput.addEventListener('change', function() {
+            datePreview.textContent = `on ${formatDate(this.value)}`;
+        });
+        
+        certificateTitleInput.addEventListener('input', function() {
+            titlePreview.textContent = this.value || 'Certificate Title';
+        });
+        
+        certificateSubtitleInput.addEventListener('input', function() {
+            subtitlePreview.textContent = this.value || 'Certificate Subtitle';
+        });
+        
+        instructorSignatureInput.addEventListener('input', function() {
+            signatureElements[0].textContent = this.value || 'Instructor Name';
+        });
+        
+        directorSignatureInput.addEventListener('input', function() {
+            signatureElements[1].textContent = this.value || 'Director Name';
+        });
+        
+        // Handle color selection
+        colorOptions.forEach(option => {
+            option.addEventListener('click', function() {
+                // Remove active class from all options
+                colorOptions.forEach(opt => opt.classList.remove('active'));
+                // Add active class to clicked option
+                this.classList.add('active');
+                // Update certificate border color
+                certificate.style.borderColor = this.getAttribute('data-color');
+            });
+        });
+        
+        // Handle logo upload
+        logoUploadInput.addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (file) {
+                const reader = new FileReader();
+                reader.onload = function(event) {
+                    logoPreview.style.backgroundImage = `url(${event.target.result})`;
+                    logoPreview.style.backgroundSize = 'cover';
+                    logoPreview.style.backgroundPosition = 'center';
+                    logoPreview.textContent = '';
+                };
+                reader.readAsDataURL(file);
+            }
+        });
+        
+        // Set initial date
+        datePreview.textContent = `on ${formatDate(completionDateInput.value)}`;
+    </script>
+</body>
+</html>
