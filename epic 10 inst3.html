@@ -1,0 +1,559 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Reviews</title>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        body {
+            background-color: #f5f7fa;
+            color: #333;
+            line-height: 1.6;
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        header {
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            color: white;
+            padding: 30px 0;
+            border-radius: 0 0 15px 15px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+            margin-bottom: 30px;
+        }
+
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .header-content h1 {
+            font-size: 2.2rem;
+            font-weight: 700;
+        }
+
+        .header-content p {
+            font-size: 1.1rem;
+            opacity: 0.9;
+        }
+
+        .stats {
+            display: flex;
+            gap: 20px;
+        }
+
+        .stat-box {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 15px 20px;
+            border-radius: 10px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+        }
+
+        .stat-value {
+            font-size: 1.8rem;
+            font-weight: 700;
+        }
+
+        .stat-label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+
+        .controls {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 25px;
+            background: white;
+            padding: 15px 20px;
+            border-radius: 10px;
+            box-shadow: 0 2px 10px rgba(0, 0, 0, 0.05);
+        }
+
+        .sort-options {
+            display: flex;
+            gap: 15px;
+            align-items: center;
+        }
+
+        .sort-btn {
+            background: #f0f4ff;
+            border: none;
+            padding: 8px 15px;
+            border-radius: 20px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .sort-btn:hover {
+            background: #e1e8ff;
+        }
+
+        .sort-btn.active {
+            background: #4d7cfe;
+            color: white;
+        }
+
+        .search-box {
+            position: relative;
+        }
+
+        .search-box input {
+            padding: 10px 15px 10px 40px;
+            border: 1px solid #ddd;
+            border-radius: 20px;
+            width: 250px;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+        }
+
+        .search-box input:focus {
+            outline: none;
+            border-color: #4d7cfe;
+            box-shadow: 0 0 0 2px rgba(77, 124, 254, 0.2);
+        }
+
+        .search-box i {
+            position: absolute;
+            left: 15px;
+            top: 50%;
+            transform: translateY(-50%);
+            color: #888;
+        }
+
+        .reviews-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(350px, 1fr));
+            gap: 25px;
+        }
+
+        .review-card {
+            background: white;
+            border-radius: 12px;
+            padding: 20px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            transition: transform 0.3s ease, box-shadow 0.3s ease;
+        }
+
+        .review-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 8px 20px rgba(0, 0, 0, 0.1);
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 1px solid #f0f0f0;
+        }
+
+        .reviewer-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .avatar {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, #6a11cb 0%, #2575fc 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-weight: bold;
+            font-size: 1.2rem;
+        }
+
+        .reviewer-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+        }
+
+        .review-date {
+            color: #888;
+            font-size: 0.9rem;
+        }
+
+        .rating {
+            display: flex;
+            gap: 3px;
+        }
+
+        .star {
+            color: #ffc107;
+            font-size: 1.1rem;
+        }
+
+        .star.empty {
+            color: #ddd;
+        }
+
+        .review-content {
+            color: #555;
+            line-height: 1.7;
+        }
+
+        .review-content p {
+            margin-bottom: 10px;
+        }
+
+        .review-footer {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 15px;
+            padding-top: 15px;
+            border-top: 1px solid #f0f0f0;
+            font-size: 0.9rem;
+            color: #777;
+        }
+
+        .helpful {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .helpful-btn {
+            background: none;
+            border: none;
+            color: #777;
+            cursor: pointer;
+            transition: color 0.3s ease;
+        }
+
+        .helpful-btn:hover {
+            color: #4d7cfe;
+        }
+
+        @media (max-width: 768px) {
+            .header-content {
+                flex-direction: column;
+                text-align: center;
+                gap: 20px;
+            }
+
+            .stats {
+                width: 100%;
+                justify-content: center;
+            }
+
+            .controls {
+                flex-direction: column;
+                gap: 15px;
+            }
+
+            .search-box input {
+                width: 100%;
+            }
+
+            .reviews-container {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div>
+                    <h1>Course Reviews</h1>
+                    <p>See what your students are saying about your course</p>
+                </div>
+                <div class="stats">
+                    <div class="stat-box">
+                        <div class="stat-value">4.8</div>
+                        <div class="stat-label">Average Rating</div>
+                    </div>
+                    <div class="stat-box">
+                        <div class="stat-value">142</div>
+                        <div class="stat-label">Total Reviews</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </header>
+
+    <div class="container">
+        <div class="controls">
+            <div class="sort-options">
+                <span>Sort by:</span>
+                <button class="sort-btn active" data-sort="date">
+                    <i class="fas fa-calendar-alt"></i> Date
+                </button>
+                <button class="sort-btn" data-sort="rating">
+                    <i class="fas fa-star"></i> Rating
+                </button>
+            </div>
+            <div class="search-box">
+                <i class="fas fa-search"></i>
+                <input type="text" placeholder="Search reviews...">
+            </div>
+        </div>
+
+        <div class="reviews-container">
+            <!-- Review 1 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="avatar">JD</div>
+                        <div>
+                            <div class="reviewer-name">John Doe</div>
+                            <div class="review-date">March 15, 2023</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>This course exceeded my expectations! The instructor explained complex concepts in a way that was easy to understand. The practical examples were especially helpful for applying what I learned.</p>
+                    <p>I would highly recommend this course to anyone looking to improve their skills in this area.</p>
+                </div>
+                <div class="review-footer">
+                    <div class="helpful">
+                        <button class="helpful-btn"><i class="far fa-thumbs-up"></i> Helpful</button>
+                        <span>12 found this helpful</span>
+                    </div>
+                    <div class="course-module">Module 4: Advanced Techniques</div>
+                </div>
+            </div>
+
+            <!-- Review 2 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="avatar">SJ</div>
+                        <div>
+                            <div class="reviewer-name">Sarah Johnson</div>
+                            <div class="review-date">February 28, 2023</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star empty"><i class="far fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>Great course overall! The content was well-structured and the instructor was knowledgeable. I particularly enjoyed the real-world case studies that were included.</p>
+                    <p>My only suggestion would be to include more exercises for practice. Otherwise, excellent course!</p>
+                </div>
+                <div class="review-footer">
+                    <div class="helpful">
+                        <button class="helpful-btn"><i class="far fa-thumbs-up"></i> Helpful</button>
+                        <span>8 found this helpful</span>
+                    </div>
+                    <div class="course-module">Module 2: Fundamentals</div>
+                </div>
+            </div>
+
+            <!-- Review 3 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="avatar">MR</div>
+                        <div>
+                            <div class="reviewer-name">Michael Roberts</div>
+                            <div class="review-date">February 10, 2023</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>Absolutely fantastic course! The instructor's teaching style made difficult topics accessible. The pacing was perfect, and I never felt overwhelmed.</p>
+                    <p>The supplementary materials were also very valuable. I've already started applying these concepts in my work with great results.</p>
+                </div>
+                <div class="review-footer">
+                    <div class="helpful">
+                        <button class="helpful-btn"><i class="far fa-thumbs-up"></i> Helpful</button>
+                        <span>15 found this helpful</span>
+                    </div>
+                    <div class="course-module">Module 5: Practical Applications</div>
+                </div>
+            </div>
+
+            <!-- Review 4 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="avatar">ET</div>
+                        <div>
+                            <div class="reviewer-name">Emily Thompson</div>
+                            <div class="review-date">January 22, 2023</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star empty"><i class="far fa-star"></i></span>
+                        <span class="star empty"><i class="far fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>The course content was good, but I found some sections moved too quickly. I would have appreciated more detailed explanations in the advanced modules.</p>
+                    <p>The instructor was responsive to questions in the forum, which was helpful when I got stuck on certain concepts.</p>
+                </div>
+                <div class="review-footer">
+                    <div class="helpful">
+                        <button class="helpful-btn"><i class="far fa-thumbs-up"></i> Helpful</button>
+                        <span>5 found this helpful</span>
+                    </div>
+                    <div class="course-module">Module 3: Intermediate Concepts</div>
+                </div>
+            </div>
+
+            <!-- Review 5 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="avatar">DW</div>
+                        <div>
+                            <div class="reviewer-name">David Wilson</div>
+                            <div class="review-date">January 5, 2023</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>This is one of the best courses I've taken online. The instructor's passion for the subject is evident, and it made the learning experience enjoyable.</p>
+                    <p>The projects were challenging but achievable, and I feel much more confident in my abilities after completing this course.</p>
+                </div>
+                <div class="review-footer">
+                    <div class="helpful">
+                        <button class="helpful-btn"><i class="far fa-thumbs-up"></i> Helpful</button>
+                        <span>20 found this helpful</span>
+                    </div>
+                    <div class="course-module">Final Project</div>
+                </div>
+            </div>
+
+            <!-- Review 6 -->
+            <div class="review-card">
+                <div class="review-header">
+                    <div class="reviewer-info">
+                        <div class="avatar">LM</div>
+                        <div>
+                            <div class="reviewer-name">Lisa Martinez</div>
+                            <div class="review-date">December 18, 2022</div>
+                        </div>
+                    </div>
+                    <div class="rating">
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star"><i class="fas fa-star"></i></span>
+                        <span class="star empty"><i class="far fa-star"></i></span>
+                    </div>
+                </div>
+                <div class="review-content">
+                    <p>Very comprehensive course with lots of valuable information. The instructor provided clear explanations and the examples were relevant to real-world scenarios.</p>
+                    <p>I would have liked more interactive elements, but overall it was a great learning experience that I would recommend to others.</p>
+                </div>
+                <div class="review-footer">
+                    <div class="helpful">
+                        <button class="helpful-btn"><i class="far fa-thumbs-up"></i> Helpful</button>
+                        <span>9 found this helpful</span>
+                    </div>
+                    <div class="course-module">Module 1: Introduction</div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // Sort functionality
+        document.querySelectorAll('.sort-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                // Remove active class from all buttons
+                document.querySelectorAll('.sort-btn').forEach(btn => {
+                    btn.classList.remove('active');
+                });
+                
+                // Add active class to clicked button
+                this.classList.add('active');
+                
+                // In a real application, you would sort the reviews here
+                // For this demo, we'll just show an alert
+                const sortType = this.getAttribute('data-sort');
+                alert(`Reviews sorted by ${sortType === 'date' ? 'date' : 'rating'}`);
+            });
+        });
+
+        // Search functionality
+        const searchInput = document.querySelector('.search-box input');
+        searchInput.addEventListener('input', function() {
+            const searchTerm = this.value.toLowerCase();
+            const reviewCards = document.querySelectorAll('.review-card');
+            
+            reviewCards.forEach(card => {
+                const reviewText = card.querySelector('.review-content').textContent.toLowerCase();
+                const reviewerName = card.querySelector('.reviewer-name').textContent.toLowerCase();
+                
+                if (reviewText.includes(searchTerm) || reviewerName.includes(searchTerm)) {
+                    card.style.display = 'block';
+                } else {
+                    card.style.display = 'none';
+                }
+            });
+        });
+
+        // Helpful button functionality
+        document.querySelectorAll('.helpful-btn').forEach(button => {
+            button.addEventListener('click', function() {
+                const helpfulCount = this.nextElementSibling;
+                let count = parseInt(helpfulCount.textContent);
+                count++;
+                helpfulCount.textContent = `${count} found this helpful`;
+                
+                // Change icon to filled
+                this.innerHTML = '<i class="fas fa-thumbs-up"></i> Helpful';
+                this.style.color = '#4d7cfe';
+                
+                // Disable button after click
+                this.disabled = true;
+            });
+        });
+    </script>
+</body>
+</html>
