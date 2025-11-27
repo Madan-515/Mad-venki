@@ -1,0 +1,553 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Course Questions Management</title>
+    <style>
+        :root {
+            --primary-color: #3498db;
+            --secondary-color: #2c3e50;
+            --accent-color: #e74c3c;
+            --light-color: #f8f9fa;
+            --dark-color: #343a40;
+            --success-color: #28a745;
+            --warning-color: #ffc107;
+            --border-color: #dee2e6;
+            --shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+        }
+        
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+        }
+        
+        body {
+            background-color: #f5f7fa;
+            color: var(--dark-color);
+            line-height: 1.6;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+        
+        header {
+            background-color: white;
+            box-shadow: var(--shadow);
+            padding: 15px 0;
+            margin-bottom: 30px;
+        }
+        
+        .header-content {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .logo {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .user-info {
+            display: flex;
+            align-items: center;
+            gap: 15px;
+        }
+        
+        .avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background-color: var(--primary-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+        }
+        
+        .page-title {
+            font-size: 28px;
+            margin-bottom: 20px;
+            color: var(--secondary-color);
+        }
+        
+        .course-info {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-bottom: 30px;
+        }
+        
+        .course-title {
+            font-size: 22px;
+            margin-bottom: 10px;
+            color: var(--secondary-color);
+        }
+        
+        .course-meta {
+            display: flex;
+            gap: 20px;
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .content-area {
+            display: grid;
+            grid-template-columns: 1fr 350px;
+            gap: 30px;
+        }
+        
+        .questions-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .section-title {
+            font-size: 20px;
+            margin-bottom: 20px;
+            padding-bottom: 10px;
+            border-bottom: 1px solid var(--border-color);
+            color: var(--secondary-color);
+        }
+        
+        .questions-list {
+            max-height: 600px;
+            overflow-y: auto;
+        }
+        
+        .question-item {
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            padding: 15px;
+            margin-bottom: 15px;
+            transition: all 0.3s ease;
+        }
+        
+        .question-item:hover {
+            box-shadow: var(--shadow);
+        }
+        
+        .question-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .student-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+        
+        .student-avatar {
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            background-color: var(--warning-color);
+            color: white;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: bold;
+        }
+        
+        .student-name {
+            font-weight: 500;
+        }
+        
+        .question-date {
+            color: #6c757d;
+            font-size: 14px;
+        }
+        
+        .question-content {
+            margin-bottom: 15px;
+        }
+        
+        .question-text {
+            margin-bottom: 10px;
+        }
+        
+        .question-actions {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+        
+        .action-buttons {
+            display: flex;
+            gap: 10px;
+        }
+        
+        .btn {
+            padding: 8px 15px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 500;
+            transition: all 0.2s ease;
+        }
+        
+        .btn-primary {
+            background-color: var(--primary-color);
+            color: white;
+        }
+        
+        .btn-primary:hover {
+            background-color: #2980b9;
+        }
+        
+        .btn-outline {
+            background-color: transparent;
+            border: 1px solid var(--border-color);
+            color: var(--dark-color);
+        }
+        
+        .btn-outline:hover {
+            background-color: #f8f9fa;
+        }
+        
+        .btn-success {
+            background-color: var(--success-color);
+            color: white;
+        }
+        
+        .btn-success:hover {
+            background-color: #218838;
+        }
+        
+        .pinned-section {
+            background-color: white;
+            border-radius: 8px;
+            padding: 25px;
+            box-shadow: var(--shadow);
+        }
+        
+        .pinned-questions {
+            margin-bottom: 20px;
+        }
+        
+        .pinned-item {
+            background-color: #f8f9fa;
+            border-left: 4px solid var(--primary-color);
+            border-radius: 4px;
+            padding: 15px;
+            margin-bottom: 15px;
+        }
+        
+        .pinned-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+        
+        .pin-badge {
+            background-color: var(--primary-color);
+            color: white;
+            padding: 3px 8px;
+            border-radius: 4px;
+            font-size: 12px;
+        }
+        
+        .empty-state {
+            text-align: center;
+            padding: 30px;
+            color: #6c757d;
+        }
+        
+        .empty-state i {
+            font-size: 40px;
+            margin-bottom: 15px;
+            color: #dee2e6;
+        }
+        
+        .stats-card {
+            background-color: white;
+            border-radius: 8px;
+            padding: 20px;
+            box-shadow: var(--shadow);
+            margin-top: 20px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 15px;
+        }
+        
+        .stat-item {
+            text-align: center;
+            padding: 15px;
+            border-radius: 6px;
+            background-color: #f8f9fa;
+        }
+        
+        .stat-value {
+            font-size: 24px;
+            font-weight: bold;
+            color: var(--primary-color);
+        }
+        
+        .stat-label {
+            font-size: 14px;
+            color: #6c757d;
+        }
+        
+        @media (max-width: 992px) {
+            .content-area {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <header>
+        <div class="container">
+            <div class="header-content">
+                <div class="logo">EduPlatform</div>
+                <div class="user-info">
+                    <span>Dr. Sarah Johnson</span>
+                    <div class="avatar">SJ</div>
+                </div>
+            </div>
+        </div>
+    </header>
+    
+    <div class="container">
+        <h1 class="page-title">Course Questions Management</h1>
+        
+        <div class="course-info">
+            <h2 class="course-title">Introduction to Web Development</h2>
+            <div class="course-meta">
+                <span>Course Code: CS101</span>
+                <span>Enrolled Students: 142</span>
+                <span>Last Updated: 2 days ago</span>
+            </div>
+        </div>
+        
+        <div class="content-area">
+            <div class="questions-section">
+                <h2 class="section-title">Student Questions</h2>
+                <div class="questions-list">
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div class="student-info">
+                                <div class="student-avatar">MJ</div>
+                                <span class="student-name">Michael Johnson</span>
+                            </div>
+                            <span class="question-date">Oct 12, 2023</span>
+                        </div>
+                        <div class="question-content">
+                            <p class="question-text">I'm having trouble understanding how CSS Grid works. Could you explain the difference between grid-template-columns and grid-template-rows with a practical example?</p>
+                        </div>
+                        <div class="question-actions">
+                            <div class="action-buttons">
+                                <button class="btn btn-primary pin-btn">Pin to Featured</button>
+                                <button class="btn btn-outline">Mark as Answered</button>
+                            </div>
+                            <span class="votes">12 upvotes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div class="student-info">
+                                <div class="student-avatar">ES</div>
+                                <span class="student-name">Emma Smith</span>
+                            </div>
+                            <span class="question-date">Oct 10, 2023</span>
+                        </div>
+                        <div class="question-content">
+                            <p class="question-text">In the last assignment, I noticed my JavaScript function wasn't working as expected. The console shows "undefined" for a variable that I declared. What could be causing this issue?</p>
+                        </div>
+                        <div class="question-actions">
+                            <div class="action-buttons">
+                                <button class="btn btn-primary pin-btn">Pin to Featured</button>
+                                <button class="btn btn-outline">Mark as Answered</button>
+                            </div>
+                            <span class="votes">8 upvotes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div class="student-info">
+                                <div class="student-avatar">RW</div>
+                                <span class="student-name">Robert Williams</span>
+                            </div>
+                            <span class="question-date">Oct 8, 2023</span>
+                        </div>
+                        <div class="question-content">
+                            <p class="question-text">What's the best practice for responsive images? Should we use the picture element, srcset, or media queries in CSS?</p>
+                        </div>
+                        <div class="question-actions">
+                            <div class="action-buttons">
+                                <button class="btn btn-primary pin-btn">Pin to Featured</button>
+                                <button class="btn btn-outline">Mark as Answered</button>
+                            </div>
+                            <span class="votes">15 upvotes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="question-item">
+                        <div class="question-header">
+                            <div class="student-info">
+                                <div class="student-avatar">LP</div>
+                                <span class="student-name">Lisa Parker</span>
+                            </div>
+                            <span class="question-date">Oct 5, 2023</span>
+                        </div>
+                        <div class="question-content">
+                            <p class="question-text">I'm confused about when to use let, const, and var in JavaScript. The textbook examples seem inconsistent. Could you clarify the key differences?</p>
+                        </div>
+                        <div class="question-actions">
+                            <div class="action-buttons">
+                                <button class="btn btn-primary pin-btn">Pin to Featured</button>
+                                <button class="btn btn-outline">Mark as Answered</button>
+                            </div>
+                            <span class="votes">21 upvotes</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="pinned-section">
+                <h2 class="section-title">Featured Questions</h2>
+                <div class="pinned-questions">
+                    <div class="pinned-item">
+                        <div class="pinned-header">
+                            <span class="student-name">David Chen</span>
+                            <span class="pin-badge">Pinned</span>
+                        </div>
+                        <p class="question-text">What's the difference between semantic and non-semantic HTML elements? Why should we prefer semantic elements?</p>
+                        <div class="question-actions">
+                            <button class="btn btn-outline">Unpin</button>
+                            <span class="votes">18 upvotes</span>
+                        </div>
+                    </div>
+                    
+                    <div class="pinned-item">
+                        <div class="pinned-header">
+                            <span class="student-name">Amanda Lee</span>
+                            <span class="pin-badge">Pinned</span>
+                        </div>
+                        <p class="question-text">How does the browser decide which CSS rule to apply when there are conflicting styles? What's the order of precedence?</p>
+                        <div class="question-actions">
+                            <button class="btn btn-outline">Unpin</button>
+                            <span class="votes">24 upvotes</span>
+                        </div>
+                    </div>
+                </div>
+                
+                <div class="empty-state" id="emptyPinned" style="display: none;">
+                    <i>📌</i>
+                    <p>No questions pinned yet</p>
+                    <p>Pin helpful questions to feature them on the course page</p>
+                </div>
+                
+                <div class="stats-card">
+                    <h3 class="section-title">Questions Overview</h3>
+                    <div class="stats-grid">
+                        <div class="stat-item">
+                            <div class="stat-value">42</div>
+                            <div class="stat-label">Total Questions</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">2</div>
+                            <div class="stat-label">Featured</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">35</div>
+                            <div class="stat-label">Answered</div>
+                        </div>
+                        <div class="stat-item">
+                            <div class="stat-value">5</div>
+                            <div class="stat-label">Pending</div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            const pinButtons = document.querySelectorAll('.pin-btn');
+            const pinnedContainer = document.querySelector('.pinned-questions');
+            const emptyPinned = document.getElementById('emptyPinned');
+            
+            // Check if there are any pinned questions
+            updateEmptyState();
+            
+            pinButtons.forEach(button => {
+                button.addEventListener('click', function() {
+                    const questionItem = this.closest('.question-item');
+                    const studentName = questionItem.querySelector('.student-name').textContent;
+                    const questionText = questionItem.querySelector('.question-text').textContent;
+                    const votes = questionItem.querySelector('.votes').textContent;
+                    
+                    // Create pinned question element
+                    const pinnedQuestion = document.createElement('div');
+                    pinnedQuestion.className = 'pinned-item';
+                    pinnedQuestion.innerHTML = `
+                        <div class="pinned-header">
+                            <span class="student-name">${studentName}</span>
+                            <span class="pin-badge">Pinned</span>
+                        </div>
+                        <p class="question-text">${questionText}</p>
+                        <div class="question-actions">
+                            <button class="btn btn-outline unpin-btn">Unpin</button>
+                            <span class="votes">${votes}</span>
+                        </div>
+                    `;
+                    
+                    // Add to pinned container
+                    pinnedContainer.appendChild(pinnedQuestion);
+                    
+                    // Add event listener to the new unpin button
+                    pinnedQuestion.querySelector('.unpin-btn').addEventListener('click', function() {
+                        pinnedQuestion.remove();
+                        updateEmptyState();
+                    });
+                    
+                    // Disable the pin button on the original question
+                    this.disabled = true;
+                    this.textContent = 'Pinned';
+                    this.classList.remove('btn-primary');
+                    this.classList.add('btn-success');
+                    
+                    updateEmptyState();
+                });
+            });
+            
+            // Add event listeners to existing unpin buttons
+            document.querySelectorAll('.unpin-btn').forEach(button => {
+                button.addEventListener('click', function() {
+                    this.closest('.pinned-item').remove();
+                    updateEmptyState();
+                });
+            });
+            
+            function updateEmptyState() {
+                if (pinnedContainer.children.length === 0) {
+                    emptyPinned.style.display = 'block';
+                } else {
+                    emptyPinned.style.display = 'none';
+                }
+            }
+        });
+    </script>
+</body>
+</html>
